@@ -120,4 +120,10 @@ app.UseSpa(spa =>
 	}
 });
 
+using (var scope = app.Services.CreateScope())
+{
+	var dataContext = scope.ServiceProvider.GetRequiredService<AppDatabaseContext>();
+	dataContext.Database.Migrate();
+}
+
 app.Run();
