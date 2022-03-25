@@ -1,0 +1,272 @@
+<div class="row">
+    <div class="col">
+        <table class="table table-sm table-bordered caption-top">
+            <caption>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="d-inline-block">List of TMCS Zone</h3>
+                        <div class="form-check d-inline-block ms-4">
+                            <input class="form-check-input" [(ngModel)]="deleted" (change)="loadZones()" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              <b>Deleted</b>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="search"> <i class="bi bi-search"></i> <input type="text" (keyup)="search = $any($event.target).value;loadZones();" class="form-control" placeholder="Search"></div>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-primary"(click)="btn_add_edit_modal.click()">Add New</button>
+                    </div>
+                </div>
+            </caption>
+            <thead class="primary-color">
+                <tr>
+                    <th>Zone Name</th>
+                    <th>Fan Direction</th>
+                    <th>Fan Direction Name</th>
+                    <th>Track No.</th>
+                    <th>Blocks</th>
+                    <th>Shafts</th>
+                    <th class="w-120px" *ngIf="!deleted">Edit/Delete</th>
+                    <th class="w-120px" *ngIf="deleted">Recover</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let zone of zones; let i = index;">
+                        <td>{{zone.name}}</td>
+                        <td>{{zone.fanDirection}}</td>
+                        <td>{{zone.fanDirection == 'Up' ? zone.upName : ('Left Fan: ' + zone.leftName + ' | ' + 'Right Fan: ' + zone.rightName)}}</td>
+                        <td>{{zone.trackNo}}</td>
+                        <td>{{getBlocks(i)}}</td>
+                        <td>{{getShaftNames(i)}}</td>
+                        <td class="text-center" *ngIf="!deleted">
+                            <i class="bi bi-pencil-square fs-4 pointer icons" (click)="selectZoneForEdit(zone);btn_add_edit_modal.click();"></i>
+                            <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="zoneIndex = i" data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
+                        </td>
+                        <td class="text-center" *ngIf="deleted">
+                            <i class="bi bi-arrow-clockwise fs-4 pointer icons" (click)="recover(i);"></i>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="zones.length == 0 && !loading">
+                    <tr>
+                        <td colspan="9" *ngIf="!deleted" class="text-center align-middle h-400px"><h4>No Zone Found. You can add new by clicking on "Add New" button.</h4></td>
+                        <td colspan="9" *ngIf="deleted" class="text-center align-middle h-400px"><h4>No Deleted Zone Found.</h4></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="loading">
+                    <tr class="align-middle h-400px">
+                        <td colspan="9" class="text-center">
+                            <div class="spinner-border w-5rem h-5rem" role="status">
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row mt-1" *ngIf="total > take">
+    <div class="col-md-12">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li [class]="page == 1 ? 'page-item disabled' : 'page-item'">
+            <button class="page-link" [disabled]="page == 1" (click)="prevPage()">Previous</button>
+          </li>
+          <ng-container *ngIf="totalPages == 1">
+            <li class="page-item"><button class="page-link" (click)="goToPage(1)">1</button></li>
+          </ng-container>
+          <ng-container *ngIf="totalPages > 1">
+            <ng-container *ngIf="page == 1">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= page && (i + 1) <= (page  + 2)" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="page > 1 && page < totalPages">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= (page  - 1) && (i + 1) <= (page  + 1)" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="page == totalPages">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= (page  - 2) && (i + 1) <= page" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <li [class]="page == totalPages ? 'page-item disabled' : 'page-item'">
+            <button class="page-link" [disabled]="page == totalPages" (click)="nextPage()">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+</div>
+
+<form [formGroup]="form" *ngIf="form" (ngSubmit)="saveUpdate(form.value)" novalidate>
+    <div class="modal fade" id="add_edit_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Zone</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="newForm();" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div [class]="form.get('fanDirection')?.value == 'Left/Right' ? 'col-md-3 mt-2' : 'col-md-4 mt-2'">
+                                <label for="name" class="form-label">Zone Name</label>
+                                <input type="text" class="{{form.get('name')?.touched ? (form.get('name')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="name" placeholder="E.g: Zone 1-1" formControlName="name">
+                                <div class="invalid-feedback" *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+                                    Zone Name is required.
+                                </div>
+                            </div>
+                            <div [class]="form.get('fanDirection')?.value == 'Left/Right' ? 'col-md-3 mt-2' : 'col-md-4 mt-2'">
+                                <label for="fanDirection" class="form-label">Fan Direction</label>
+                                <select class="{{form.get('fanDirection')?.touched ? (form.get('fanDirection')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-select" id="fanDirection" formControlName="fanDirection">
+                                    <option value="">Select Fan Direction</option>
+                                    <option value="Up">Up</option>
+                                    <option value="Left/Right">Left and Right</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="form.get('fanDirection')?.touched && form.get('fanDirection')?.hasError('required')">
+                                    Fan Direction is required.
+                                </div>
+                            </div>
+                            <ng-container *ngIf="form.get('fanDirection')?.value == 'Up'">
+                                <div class="col-md-4 mt-2">
+                                    <label for="upName" class="form-label">Up Fan Name</label>
+                                    <input type="text" class="{{form.get('upName')?.touched ? (form.get('upName')?.value == '' ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="upName" placeholder="E.g: Zone 1-1" formControlName="upName">
+                                    <div class="invalid-feedback" *ngIf="form.get('upName')?.touched && form.get('upName')?.value == ''">
+                                        Up Fan Name is required.
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="form.get('fanDirection')?.value == 'Left/Right'">
+                                <div class="col-md-3 mt-2">
+                                    <label for="leftName" class="form-label">Left Fan Name</label>
+                                    <input type="text" class="{{form.get('leftName')?.touched ? (form.get('leftName')?.value == '' ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="leftName" placeholder="E.g: Zone 1-1" formControlName="leftName">
+                                    <div class="invalid-feedback" *ngIf="form.get('leftName')?.touched && form.get('leftName')?.value == ''">
+                                        Left Fan Name is required.
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-2">
+                                    <label for="rightName" class="form-label">Right Fan Name</label>
+                                    <input type="text" class="{{form.get('rightName')?.touched ? (form.get('rightName')?.value == '' ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="rightName" placeholder="E.g: Zone 1-1" formControlName="rightName">
+                                    <div class="invalid-feedback" *ngIf="form.get('rightName')?.touched && form.get('rightName')?.value == ''">
+                                        Right Fan Name is required.
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mt-2">
+                                <label for="trackNo" class="form-label">Track No.</label>
+                                <input type="text" class="{{form.get('trackNo')?.touched ? (form.get('trackNo')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="trackNo" placeholder="E.g: Track 01" formControlName="trackNo">
+                                <div class="invalid-feedback" *ngIf="form.get('trackNo')?.touched && form.get('trackNo')?.hasError('required')">
+                                    Track No. is required.
+                                </div>
+                            </div>
+                            <div class="col-md-45 mt-2">
+                                <label for="zoneLayout" class="form-label">Zone Layout</label>
+                                <input class="form-control" accept="image/*" #zoneLayout type="file" (change)="zoneLayoutUpload($event)">
+                                <input type="text" class="form-control d-none" id="zoneLayout" formControlName="zoneLayout">
+                            </div>
+                            <div class="col-md-45 mt-2">
+                                <label for="cctvlayout" class="form-label">CCTV Layout</label>
+                                <input class="form-control" accept="image/*" #cctvLayout type="file" (change)="cctvLayoutUpload($event)">
+                                <input type="text" class="form-control d-none" id="cctvlayout" formControlName="cctvLayout">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <h3>Blocks <i class="bi bi-plus pointer text-success" (click)="newBlock()"></i></h3>
+                            </div>
+                        </div>
+                        <div class="row" formArrayName="blocks">
+                            <div class="col-md-12 mx-auto">
+                                <ng-container *ngFor="let block of $any(form.controls.blocks).controls; let j = index;">
+                                    <div class="row" [formGroupName]="j">
+                                        <div class="col-md-4 mt-2">
+                                            <label for="blockName{{j}}" class="form-label">Block Name</label>
+                                            <input type="text" class="{{block.get('name')?.touched ? (block.get('name')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="blockName{{j}}" placeholder="E.g: B_599" formControlName="name">
+                                            <div class="invalid-feedback" *ngIf="block.get('name')?.touched && block.get('name')?.hasError('required')">
+                                                Block Name is required.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 mt-2">
+                                            <label for="startLength" class="form-label">Start Length</label>
+                                            <input type="number" min="0" class="{{block.get('startLength')?.touched ? (block.get('startLength')?.hasError('required') || block.get('startLength')?.hasError('min') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="startLength" formControlName="startLength">
+                                            <div class="invalid-feedback" *ngIf="block.get('startLength')?.touched && block.get('startLength')?.hasError('required')">
+                                                Start Length is required.
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="block.get('startLength')?.touched && block.get('startLength')?.hasError('min')">
+                                                Start Length should be greater than -1.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 mt-2">
+                                            <label for="endLength" class="form-label">End Length</label>
+                                            <input type="number" min="1" class="{{block.get('endLength')?.touched ? (block.get('endLength')?.hasError('required') || block.get('endLength')?.hasError('min') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="endLength" formControlName="endLength">
+                                            <div class="invalid-feedback" *ngIf="block.get('endLength')?.touched && block.get('endLength')?.hasError('required')">
+                                                End Length is required.
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="block.get('endLength')?.touched && block.get('endLength')?.hasError('min')">
+                                                End Length should be greater than 0.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mt-2">
+                                            <label for="shaftName{{j}}" class="form-label">Shaft Name</label>
+                                            <input type="text" class="{{block.get('shaftName')?.touched ? (block.get('shaftName')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="blockName{{j}}" placeholder="E.g: EES 03" formControlName="shaftName">
+                                            <div class="invalid-feedback" *ngIf="block.get('shaftName')?.touched && block.get('shaftName')?.hasError('required')">
+                                                Shaft Name is required.
+                                            </div>
+                                            <hr class="w-100 d-md-none d-block"*ngIf="j == 0 && $any(form.controls.blocks).controls.length > 1">
+                                        </div>
+                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-none d-md-block" *ngIf="j > 0">
+                                            <i class="bi bi-x-lg pointer text-danger fs-4" (click)="removeBlock(j)"></i>
+                                        </div>
+                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-md-none d-block" *ngIf="j > 0">
+                                            <div class="d-grid">
+                                                <button type="button" class="btn btn-danger" (click)="removeBlock(j)">Remove Block</button>
+                                            </div>
+                                            <hr class="w-100 d-md-none d-block">
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" #btn_add_edit_close (click)="newForm();zoneLayout.value = '';cctvLayout.value = ''" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || loadingSaveEdit || !fanDirectionValidation()">
+                        <span class="spinner-border spinner-border-sm" *ngIf="loadingSaveEdit" role="status" aria-hidden="true"></span>
+                        {{updateMode ? 'Update' : 'Save'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<button type="button" class="btn btn-primary d-none" #btn_add_edit_modal data-bs-toggle="modal" data-bs-target="#add_edit_modal"></button>
+
+<div class="modal fade" id="delete_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete the Zone{{zoneIndex != -1 ? ' \'' + zones[zoneIndex].name + '\'' : ''}}?
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" #dismiss_confirm data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger" [disabled]="loadingDelete" (click)="deleteZone(zoneIndex);dismiss_confirm.click();">
+            <span class="spinner-border spinner-border-sm" *ngIf="loadingDelete" role="status" aria-hidden="true"></span>
+            Delete
+        </button>
+        </div>
+      </div>
+    </div>
+</div>

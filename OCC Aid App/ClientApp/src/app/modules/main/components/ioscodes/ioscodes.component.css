@@ -1,0 +1,41 @@
+.search {
+    position: relative;
+    box-shadow: 0 0 40px rgba(51, 51, 51, .1)
+}
+
+.search input {
+    height: 60px;
+}
+
+.search input:focus {
+    box-shadow: none;
+}
+
+.search .bi-search {
+    position: absolute;
+    top: 20px;
+    left: 16px
+}
+
+.search button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 50px;
+    width: 110px;
+}
+
+label.remove-client {
+    width: 36px;
+    height: 36px;
+    background: #dc3545;
+    text-align: center;
+    line-height: 36px;
+    border-radius: 40px;
+    position: absolute;
+    right: -8px;
+    top: -7px;
+    cursor: pointer;
+    z-index: 1;
+    color: white;
+}

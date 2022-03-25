@@ -1,0 +1,14 @@
+label.remove-client {
+    width: 36px;
+    height: 36px;
+    background: #dc3545;
+    text-align: center;
+    line-height: 36px;
+    border-radius: 40px;
+    position: absolute;
+    right: -8px;
+    top: -7px;
+    cursor: pointer;
+    z-index: 1;
+    color: white;
+}

@@ -1,0 +1,43 @@
+<div class="card border-0 rounded-extra p-5 vh-auto-set overflow-auto">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>List of users</h1>
+        </div>
+    </div>
+    <div class="row mt-5" *ngIf="loading">
+        <div class="col-2 mx-auto text-center">
+            <div class="spinner-border" style="width: 4rem; height: 4rem;"></div>
+        </div>
+    </div>
+    <div class="row mt-4" *ngIf="!loading">
+        <div class="col-12 table-responsive">
+            <table class="table table-bordered w-100">
+                <thead class="primary-color">
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="text-center" colspan="2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of usersList; let i = index;">
+                        <td>{{user.name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.role}}</td>
+                        <td>
+                            <button routerLink="/admin-controls/change-password/{{user.userId}}" class="btn btn-info w-100">
+                                <i class="bi bi-key"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button (click)="deleteUser(user.userId, i)" class="btn btn-danger w-100">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="container-fluid overflow-hidden">
+    <div class="row vh-100 overflow-auto">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 px-lg-2 px-0 bg-dark d-flex sticky-top">
+            <div class="d-flex flex-lg-column flex-row flex-grow-1 align-items-center align-items-lg-start px-3 pt-2 text-white">
+                <div  class="d-flex align-items-center pb-lg-3 mb-lg-0 me-lg-auto text-white d-none d-lg-block">
+                    <span class="fs-5 fw-bold">Admin Controls</span>
+                    <hr class="w-100 text-white h-3px opacity-100 d-none d-lg-block">
+                </div>
+                <ul class="nav nav-pills flex-lg-column flex-row flex-nowrap flex-shrink-1 flex-lg-grow-0 flex-grow-1 mb-lg-auto mb-0 justify-content-center align-items-center align-items-lg-start" id="menu">
+                    <li class="nav-item">
+                        <a routerLink="ioscodes" routerLinkActive #rla="routerLinkActive" class="{{!rla.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">IOS Codes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="acid" routerLinkActive #rla1="routerLinkActive" class="{{!rla1.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla1.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">ACID CCTV</span></a>
+                    </li>
+                    <li>
+                        <a routerLink="tmcs" routerLinkActive #rla2="routerLinkActive" class="{{!rla2.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla2.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">TMCS</span></a>
+                    </li>
+                    <li>
+                        <a routerLink="sms" routerLinkActive #rla3="routerLinkActive" class="{{!rla3.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla3.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">SMS</span></a>
+                    </li>
+                    <li>
+                        <a routerLink="logs" routerLinkActive #rla4="routerLinkActive" class="{{!rla4.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla4.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">Logs</span></a>
+                    </li>
+                    <li>
+                        <a routerLink="register-users" routerLinkActive #rla5="routerLinkActive" class="{{!rla5.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla5.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">Register Users</span></a>
+                    </li>
+                    <li>
+                        <a routerLink="manage-users" routerLinkActive #rla6="routerLinkActive" class="{{!rla6.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i class="{{rla6.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span class="ms-2">Manage Users</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col d-flex flex-column h-sm-100">
+            <div class="row align-self-end">
+                <div class="col-6">
+                    <div class="dropdown d-inline">
+                        <i class="bi {{newNotification ? 'bi-bell-fill flashy' : 'bi-bell'}} fs-3 pointer" (click)="markAsRead()" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                        <ul class="dropdown-menu dropdown-menu-lg">
+                          <li *ngFor="let notification of notifications; let i = index;">
+                            <div class="{{!notification.read ? 'dropdown-item-unread' : 'dropdown-item'}} text-wrap p-2 fs-notification">
+                                {{notification.message}}
+                                <br />
+                                <span>
+                                    {{notification.createdDate | date: 'short'}}
+                                </span>
+                            </div>
+                          </li>
+                          <li *ngIf="(notifications && notifications.length == 0) || !notifications" class="p-2 text-center fs-notification">No new notifications here</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <i class="bi bi-box-arrow-right fs-3 pointer" (click)="logout()"></i>
+                </div>
+            </div>
+            <main class="row overflow-auto">
+                <div class="col pt-1">
+                    <router-outlet></router-outlet>
+                </div>
+            </main>
+            <!-- <footer class="row bg-light py-4 mt-auto">
+                <div class="col"> Footer content here... </div>
+            </footer> -->
+        </div>
+    </div>
+</div>

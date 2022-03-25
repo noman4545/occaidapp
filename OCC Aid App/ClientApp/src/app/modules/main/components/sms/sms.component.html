@@ -1,0 +1,122 @@
+<div class="container" *ngIf="token?.role?.toLowerCase() == 'dm'">
+    <div class="row">
+        <div class="col-4 col-lg-2 text-center mx-auto">
+            <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4 mx-auto">
+            <select class="form-select" [(ngModel)]="dropdownValue" #smsList (change)="getSMSDetails($any($event.target).value)">
+                <option value="">Select SMS To Send</option>
+                <ng-container *ngFor="let sms of smss; let i = index;">
+                    <option value="{{i}}">{{sms.typeOfFailure}}</option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-4 mb-4" *ngIf="selectedSMS">
+        <div class="col-md-10 mb-4 mx-auto card shadow-lg p-4">
+            <div class="row">
+                <div class="col">
+                    <label class="remove-client" (click)="close();smsList.value=''">
+                        <i class="bi bi-x-lg"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">System Behaviour</h4>
+                    <textarea [(ngModel)]="selectedSMS.systemBehaviour" class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">How To Manage Fault<br />(Work Instruction)</h4>
+                    <textarea [(ngModel)]="selectedSMS.workInstruction" class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">Message To Be Sent Out<br />(Station Controller) SMS</h4>
+                    <textarea [(ngModel)]="selectedSMS.message" class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">Delay/Time To Return To Timetable</h4>
+                    <textarea [(ngModel)]="selectedSMS.timeToReturnToTimetable" class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-3 col-xl-2 mx-auto text-center">
+                    <button class="btn btn-primary w-100" (click)="sendSMS()">Send SMS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 mb-4" *ngIf="!selectedSMS">
+        <div class="col-md-8 text-center mx-auto mt-5">
+            <h4>Please select SMS from dropdown to edit and send.</h4>
+        </div>
+    </div>
+</div>
+
+<div class="container" *ngIf="token?.role?.toLowerCase() != 'dm' && token?.role?.toLowerCase() != 'dm'">
+    <div class="row">
+        <div class="col-4 col-lg-2 text-center mx-auto">
+            <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4 mx-auto">
+            <select class="form-select" [(ngModel)]="dropdownValue" (change)="getSMSDetails($any($event.target).value)">
+                <option value="">Select SMS</option>
+                <ng-container *ngFor="let sms of smss; let i = index;">
+                    <option value="{{i}}">{{sms.typeOfFailure}}</option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-4 mb-4" *ngIf="receivedSMS">
+        <div class="col-md-10 mb-4 mx-auto card shadow-lg p-4">
+            <div class="row">
+                <div class="col">
+                    <label class="remove-client" (click)="close();">
+                        <i class="bi bi-x-lg"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h4 class="fw-bold">{{receivedSMS.typeOfFailure}}</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">System Behaviour</h4>
+                    <textarea [(ngModel)]="receivedSMS.systemBehaviour" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">How To Manage Fault<br />(Work Instruction)</h4>
+                    <textarea [(ngModel)]="receivedSMS.workInstruction" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">Message To Be Sent Out<br />(Station Controller) SMS</h4>
+                    <textarea [(ngModel)]="receivedSMS.message" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+                <div class="col-md-6 align-self-end h-auto text-center mt-3">
+                    <h4 class="fw-bold">Delay/Time To Return To Timetable</h4>
+                    <textarea [(ngModel)]="receivedSMS.timeToReturnToTimetable" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
+                </div>
+            </div>
+            <div class="row mt-3" *ngIf="token?.role?.toLowerCase() == 'sc'">
+                <div class="col-md-4 col-xl-3 mx-auto text-center">
+                    <button class="btn btn-primary w-100" (click)="markAsComplete()">Mark As Complete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 mb-4" *ngIf="!receivedSMS">
+        <div class="col-md-8 text-center mx-auto mt-5">
+            <h4>You have not received any SMS yet.</h4>
+        </div>
+    </div>
+</div>

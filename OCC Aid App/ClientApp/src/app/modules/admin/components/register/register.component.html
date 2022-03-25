@@ -1,0 +1,95 @@
+<div class="w-100">
+    <div class="container">
+        <div class="row vh-100">
+            <div class="col-sm-7 mx-auto p-5 pb-0 shadow-lg my-auto bg-special-white">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto text-center">
+                        <h1>Register New User</h1>
+                    </div>
+                </div>
+                <div class="row" *ngIf="registerError != ''">
+                    <div class="col-md-10 mx-auto">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{registerError}}
+                            <button type="button" class="btn-close" (click)="registerError = ''" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+                <form [formGroup]="registerForm" (ngSubmit)="signUp(registerForm.value)" novalidate>
+                    <div class="row">
+                        <div class="col-lg-6 mt-2">
+                            <label for="name">Name</label>
+                            <input name="name" class="form-control" placeholder="e.g John" formControlName="name">
+                            <span class="text-danger" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.hasError('required')">
+                                Name is required
+                            </span>
+                        </div>
+                        <div class="col-lg-6 mt-2">
+                            <label for="email">Email</label>
+                            <input name="email" class="form-control" placeholder="e.g John@comapny.com" formControlName="email">
+                            <span class="text-danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')">
+                                Email is required
+                            </span>
+                            <span class="text-danger" *ngIf="registerForm.get('email')?.touched && !registerForm.get('email')?.hasError('required') && registerForm.get('email')?.hasError('email')">
+                                Invalid Email Address
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 mt-2">
+                            <label>Password</label>
+                            <input name="password" class="form-control" type="password" placeholder="e.g a2y$v13^" formControlName="password">
+                            <span class="text-danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')">
+                                Password is required
+                            </span>
+                            <span class="text-danger" *ngIf="registerForm.get('password')?.touched && !registerForm.get('password')?.hasError('required') && registerForm.get('password')?.hasError('minlength')">
+                                Password must be at least 8 characters
+                            </span>
+                            <span class="text-danger" *ngIf="registerForm.get('password')?.touched && !registerForm.get('password')?.hasError('required') && !registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.hasError('pattern')">
+                                Password must include 1 uppercase, 1 lowercase letter and 1 digit
+                            </span>
+                        </div>
+                        <div class="col-lg-6 mt-2">
+                            <label>Confirm Password</label>
+                            <input name="confirmPassword" class="form-control" type="password" placeholder="e.g a2y$v13^" formControlName="confirmPassword">
+                            <span class="text-danger" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.hasError('required')">
+                                Confirm Password is required
+                            </span>
+                            <span class="text-danger" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm?.hasError('notSame') && !registerForm.get('confirmPassword')?.hasError('required')">
+                                Confirm Password does not match
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 mx-auto mt-2">
+                            <label for="role">Role</label>
+                            <select name="role" class="form-select" formControlName="role">
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <ng-container *ngFor="let role of roles;">
+                                    <option value="{{role}}">{{role}}</option>
+                                </ng-container>
+                            </select>
+                            <span class="text-danger" *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.hasError('required')">
+                                Role is required
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-lg-4 mx-auto">
+                            <button type="submit" class="w-100 btn btn-primary" [disabled]="!registerForm.valid || loading">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Sign Up
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row lg-5 mt-5 mb-3">
+                    <div class="col-md-10 mx-auto text-center">
+                        <h5>&copy; {{currentYear}} - OCC Aid</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

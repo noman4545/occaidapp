@@ -1,0 +1,46 @@
+.vh-100{
+    height: 100vh;
+}
+.bg-lightgrey{
+    background-color: #ecf0f1;
+}
+.bg-special-white{
+    background-color: white !important;
+}
+
+.PhoneNumberInput{
+    height: 52px;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+}
+.PhoneNumberInput:hover{
+    border: 2px solid black;
+}
+.PhoneNumberInput:focus{
+    border: 2px solid var(--bs-purple);
+}
+.PhoneNumberInput:focus-visible{
+    outline: -webkit-focus-ring-color var(--bs-purple) 1px;
+}
+
+.PhoneNumberInputError{
+    height: 52px;
+    border-radius: 5px;
+    border: 2px solid red;
+}
+.PhoneNumberInputError:hover{
+    border: 2px solid red;
+}
+.PhoneNumberInputError:focus{
+    border: 2px solid red;
+}
+.PhoneNumberInputError:focus-visible{
+    outline: -webkit-focus-ring-color var(--bs-red) 1px;
+}
+
+.mat-error-properties{
+    font-size: 75%;
+    padding-left:10px !important;
+    padding: 2px;
+    height: 20px;
+}

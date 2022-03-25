@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col">
+        <table class="table table-sm table-bordered caption-top">
+            <caption>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="d-inline-block">List of ACID CCTV</h3>
+                        <div class="form-check d-inline-block ms-4">
+                            <input class="form-check-input" [(ngModel)]="deleted" (change)="loadAcids()" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              <b>Deleted</b>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="search"> <i class="bi bi-search"></i> <input type="text" (keyup)="search = $any($event.target).value;loadAcids();" class="form-control" placeholder="Search"></div>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-primary"(click)="btn_add_edit_modal.click()">Add New</button>
+                    </div>
+                </div>
+            </caption>
+            <thead class="primary-color">
+                <tr>
+                    <th>Territory</th>
+                    <th>ACID Name In ATS</th>
+                    <th>ACID Name In ISM</th>
+                    <th>PED/EEP/EES Name</th>
+                    <th>Track No.</th>
+                    <th>CCTV</th>
+                    <th *ngIf="!deleted">Edit/Delete</th>
+                    <th *ngIf="deleted">Recover</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let acid of acids; let i = index;">
+                        <td>{{acid.territory}}</td>
+                        <td>{{acid.acidNameInAts}}</td>
+                        <td>{{acid.acidNameInIsm}}</td>
+                        <td>{{acid.pedEepEesName}}</td>
+                        <td>{{acid.trackNo}}</td>
+                        <td>{{acid.cctv}}</td>
+                        <td class="text-center" *ngIf="!deleted">
+                            <i class="bi bi-pencil-square fs-4 pointer icons" (click)="selectAcidForEdit(acid);btn_add_edit_modal.click();"></i>
+                            <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="acidIndex = i" data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
+                        </td>
+                        <td class="text-center" *ngIf="deleted">
+                            <i class="bi bi-arrow-clockwise fs-4 pointer icons" (click)="recover(i);"></i>
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="acids.length == 0 && !loading">
+                    <tr>
+                        <td colspan="9" *ngIf="!deleted" class="text-center align-middle h-400px"><h4>No ACID CCTV Found. You can add new by clicking on "Add New" button.</h4></td>
+                        <td colspan="9" *ngIf="deleted" class="text-center align-middle h-400px"><h4>No Deleted ACID CCTV Found.</h4></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="loading">
+                    <tr class="align-middle h-400px">
+                        <td colspan="9" class="text-center">
+                            <div class="spinner-border w-5rem h-5rem" role="status">
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row mt-1" *ngIf="total > take">
+    <div class="col-md-12">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li [class]="page == 1 ? 'page-item disabled' : 'page-item'">
+            <button class="page-link" [disabled]="page == 1" (click)="prevPage()">Previous</button>
+          </li>
+          <ng-container *ngIf="totalPages == 1">
+            <li class="page-item"><button class="page-link" (click)="goToPage(1)">1</button></li>
+          </ng-container>
+          <ng-container *ngIf="totalPages > 1">
+            <ng-container *ngIf="page == 1">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= page && (i + 1) <= (page  + 2)" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="page > 1 && page < totalPages">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= (page  - 1) && (i + 1) <= (page  + 1)" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="page == totalPages">
+              <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+                <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link" *ngIf="(i + 1) >= (page  - 2) && (i + 1) <= page" (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <li [class]="page == totalPages ? 'page-item disabled' : 'page-item'">
+            <button class="page-link" [disabled]="page == totalPages" (click)="nextPage()">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+</div>
+
+<div class="modal fade" id="add_edit_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add ACID CCTV</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="newForm();" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="form" *ngIf="form" (ngSubmit)="saveUpdate(form.value)" novalidate>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <label for="territory" class="form-label">Territory</label>
+                            <input type="text" class="{{form.get('territory')?.touched ? (form.get('territory')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="territory" placeholder="E.g: 4A1" formControlName="territory">
+                            <div class="invalid-feedback" *ngIf="form.get('territory')?.touched && form.get('territory')?.hasError('required')">
+                                Territory is required.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="acidNameInAts" class="form-label">ACID Name In ATS</label>
+                            <input type="text" class="{{form.get('acidNameInAts')?.touched ? (form.get('acidNameInAts')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="acidNameInAts" placeholder="E.g: ACID_01_4A1" formControlName="acidNameInAts">
+                            <div class="invalid-feedback" *ngIf="form.get('acidNameInAts')?.touched && form.get('acidNameInAts')?.hasError('required')">
+                                ACID Name In ATS is required.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <label for="acidNameInIsm" class="form-label">ACID Name In ISM</label>
+                            <input type="text" class="{{form.get('acidNameInIsm')?.touched ? (form.get('acidNameInIsm')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="acidNameInIsm" placeholder="E.g: PF_T04_4A1" formControlName="acidNameInIsm">
+                            <div class="invalid-feedback" *ngIf="form.get('acidNameInIsm')?.touched && form.get('acidNameInIsm')?.hasError('required')">
+                                ACID Name In ISM is required.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="pedEepEesName" class="form-label">PED/EEP/EES Name</label>
+                            <input type="text" class="{{form.get('pedEepEesName')?.touched ? (form.get('pedEepEesName')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="pedEepEesName" placeholder="E.g: PED_04" formControlName="pedEepEesName">
+                            <div class="invalid-feedback" *ngIf="form.get('pedEepEesName')?.touched && form.get('pedEepEesName')?.hasError('required')">
+                                PED/EEP/EES Name is required.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <label for="trackNo" class="form-label">Track No.</label>
+                            <input type="text" class="{{form.get('trackNo')?.touched ? (form.get('trackNo')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="trackNo" placeholder="E.g: Track 04" formControlName="trackNo">
+                            <div class="invalid-feedback" *ngIf="form.get('trackNo')?.touched && form.get('trackNo')?.hasError('required')">
+                                Track No. is required.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="cctv" class="form-label">CCTV</label>
+                            <input type="text" class="{{form.get('cctv')?.touched ? (form.get('cctv')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control" id="cctv" placeholder="E.g: CFIX-4A1-PL-004" formControlName="cctv">
+                            <div class="invalid-feedback" *ngIf="form.get('cctv')?.touched && form.get('cctv')?.hasError('required')">
+                                CCTV is required.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <label for="layout" class="form-label">Layout</label>
+                            <input class="form-control" accept="image/*" type="file" #layout (change)="layoutUpload($event);">
+                            <input type="text" class="form-control d-none" id="layout" formControlName="layout">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" #btn_add_edit_close (click)="newForm();layout.value=''" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || loadingSaveEdit">
+                <span class="spinner-border spinner-border-sm" *ngIf="loadingSaveEdit" role="status" aria-hidden="true"></span>
+                {{updateMode ? 'Update' : 'Save'}}
+            </button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary d-none" #btn_add_edit_modal data-bs-toggle="modal" data-bs-target="#add_edit_modal"></button>
+
+<div class="modal fade" id="delete_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete the ACID CCTV{{acidIndex != -1 ? ' \'' + acids[acidIndex].acidNameInAts + '\'' : ''}}?
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" #dismiss_confirm data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger" [disabled]="loadingDelete" (click)="deleteAcid(acidIndex);dismiss_confirm.click();">
+            <span class="spinner-border spinner-border-sm" *ngIf="loadingDelete" role="status" aria-hidden="true"></span>
+            Delete
+        </button>
+        </div>
+      </div>
+    </div>
+</div>

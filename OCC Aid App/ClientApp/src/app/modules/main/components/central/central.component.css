@@ -1,0 +1,15 @@
+.card {
+    width: 250px;
+    height: 270px;
+    transition: 0.2s all;
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    color: #0d6efd;
+}
+
+.fs-1{
+    font-size: 5rem !important;
+}

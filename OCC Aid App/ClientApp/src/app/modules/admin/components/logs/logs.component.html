@@ -1,0 +1,108 @@
+<div class="row">
+  <div class="col">
+    <table class="table table-sm table-bordered caption-top">
+      <caption>
+        <div class="row">
+          <div class="col mt-2">
+            <h3>List of Logs</h3>
+          </div>
+          <div class="col-md-3 mt-2">
+            <div class="search"> <i class="bi bi-search"></i> <input type="text"
+                (keyup)="search = $any($event.target).value;loadLogs();" class="form-control" placeholder="Search">
+            </div>
+          </div>
+          <div class="col-md-3 mt-2">
+            <select class="form-select" [(ngModel)]="selectedScreen" (change)="loadLogs()">
+              <option value="">Select Screen Filter</option>
+              <option value="IOS Codes">IOS Codes</option>
+              <option value="ACID CCTV">ACID CCTV</option>
+              <option value="TMCS">TMCS</option>
+              <option value="SMS">SMS</option>
+            </select>
+          </div>
+          <div class="col-md-3 mt-2">
+            <select class="form-select" [(ngModel)]="selectedRole" (change)="loadLogs()">
+              <option value="">Select Role Filter</option>
+              <ng-container *ngFor="let role of roles;">
+                <option value="{{role}}">{{role}}</option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+      </caption>
+      <thead class="primary-color">
+        <tr>
+          <th class="w-25">Date Time</th>
+          <th class="w-50">Log</th>
+          <th class="w-25">Role</th>
+          <th class="w-25">Screen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!loading">
+          <tr *ngFor="let log of logs; let i = index;">
+            <td>{{log.createdDate | date: 'short'}}</td>
+            <td>{{log.message}}</td>
+            <td>{{log.actionRole}}</td>
+            <td>{{log.screen}}</td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="logs.length == 0 && !loading">
+          <tr>
+            <td colspan="9" class="text-center align-middle h-400px">
+              <h4>No Logs found.</h4>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="loading">
+          <tr class="align-middle h-400px">
+            <td colspan="9" class="text-center">
+              <div class="spinner-border w-5rem h-5rem" role="status">
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row mt-1" *ngIf="total > take">
+  <div class="col-md-12">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        <li [class]="page == 1 ? 'page-item disabled' : 'page-item'">
+          <button class="page-link" [disabled]="page == 1" (click)="prevPage()">Previous</button>
+        </li>
+        <ng-container *ngIf="totalPages == 1">
+          <li class="page-item"><button class="page-link" (click)="goToPage(1)">1</button></li>
+        </ng-container>
+        <ng-container *ngIf="totalPages > 1">
+          <ng-container *ngIf="page == 1">
+            <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+              <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link"
+                  *ngIf="(i + 1) >= page && (i + 1) <= (page  + 2)" (click)="goToPage((i + 1))">{{(i + 1)}}</button>
+              </li>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="page > 1 && page < totalPages">
+            <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+              <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link"
+                  *ngIf="(i + 1) >= (page  - 1) && (i + 1) <= (page  + 1)"
+                  (click)="goToPage((i + 1))">{{(i + 1)}}</button></li>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="page == totalPages">
+            <ng-container *ngFor="let pageNo of [].constructor(totalPages); let i = index;">
+              <li [class]="(i + 1) == page ? 'page-item active' : 'page-item'"><button class="page-link"
+                  *ngIf="(i + 1) >= (page  - 2) && (i + 1) <= page" (click)="goToPage((i + 1))">{{(i + 1)}}</button>
+              </li>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <li [class]="page == totalPages ? 'page-item disabled' : 'page-item'">
+          <button class="page-link" [disabled]="page == totalPages" (click)="nextPage()">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

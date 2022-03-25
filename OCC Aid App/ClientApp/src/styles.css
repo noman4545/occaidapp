@@ -1,0 +1,43 @@
+.pointer {
+    cursor: pointer;
+}
+
+.no-resize {
+    resize: none;
+}
+
+.h-400px {
+    height: 400px;
+}
+
+.w-5rem {
+    width: 5rem !important;
+}
+
+.h-5rem {
+    height: 5rem !important;
+}
+
+.search {
+    position: relative;
+}
+
+.search input {
+    text-indent: 25px;
+    border: 2px solid #d6d4d4
+}
+
+.search input:focus {
+    box-shadow: none;
+}
+
+.search .bi-search {
+    position: absolute;
+    top: 9px;
+    left: 16px
+}
+
+.primary-color{
+    color:white;
+    background-color: var(--bs-primary);
+}

@@ -1,0 +1,57 @@
+<div class="w-100 bg-lightgrey">
+    <div class="container">
+        <div class="row vh-100">
+            <div class="col-md-6 mx-auto p-5 pb-0 shadow-lg my-auto bg-special-white">
+                <div class="row">
+                    <div class="col-md-10 mx-auto text-center">
+                        <h1>Log In</h1>
+                    </div>
+                </div>
+                <div class="row" *ngIf="loginError != ''">
+                    <div class="col-md-10 mx-auto">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{loginError}}
+                            <button type="button" class="btn-close" (click)="loginError = ''" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+                <form [formGroup]="loginForm" (ngSubmit)="logIn(loginForm.value)" novalidate>
+                    <div class="row">
+                        <div class="col-md-10 mx-auto">
+                            <label for="email">Email</label>
+                            <input name="email" class="form-control" placeholder="e.g John@comapny.com" formControlName="email">
+                            <span class="text-danger" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">
+                                Email is required
+                            </span>
+                            <span class="text-danger" *ngIf="loginForm.get('email')?.touched && !loginForm.get('email')?.hasError('required') && loginForm.get('email')?.hasError('email')">
+                                Invalid Email Address
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-10 mx-auto">
+                            <label for="password">Password</label>
+                            <input name="password" class="form-control" type="password" placeholder="e.g a2y$v13^" formControlName="password">
+                            <span class="text-danger" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
+                                Password is required
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4 mx-auto">
+                            <button type="submit" [disabled]="!loginForm.valid || loading" class="w-100 btn btn-primary">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Login
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row mt-5 mb-3">
+                    <div class="col-md-10 mx-auto text-center">
+                        <h5>&copy; {{currentYear}} - OCC Aid</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
