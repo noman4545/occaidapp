@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using OCC_Aid_App.DatabaseContext;
 using OCC_Aid_App.Interfaces;
+using OCC_Aid_App.Mapping;
 using OCC_Aid_App.Models;
 using OCC_Aid_App.Services;
 using OCC_Aid_App.SignalR;
@@ -60,6 +61,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddSingleton<ITypeMapper, RegisterationAutoMapper>();
 builder.Services.AddSingleton<IServiceScopeFactory<AppDatabaseContext>, ServiceScopeFactory<AppDatabaseContext>>();
 builder.Services.AddSingleton<IServiceScopeFactory<UserManager<User>>, ServiceScopeFactory<UserManager<User>>>();
 builder.Services.AddSingleton<IServiceScopeFactory<RoleManager<IdentityRole>>, ServiceScopeFactory<RoleManager<IdentityRole>>>();
@@ -69,7 +71,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IIOSCodeService, IOSCodeService>();
 builder.Services.AddSingleton<IACIDService, ACIDService>();
 builder.Services.AddSingleton<ILogService, LogService>();
-builder.Services.AddSingleton<ITMCSService, TMCSService>();
+builder.Services.AddScoped<ITMCSService, TMCSService>();
 builder.Services.AddSingleton<ISMSService, SMSService>();
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<FileUtility>();

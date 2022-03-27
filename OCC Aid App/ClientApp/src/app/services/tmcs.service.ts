@@ -7,7 +7,8 @@ import { Block } from '../models/block.model';
 import { GetZoneResponse } from '../models/getZoneResponse.model';
 import { TMCSEmergency } from '../models/tmcsEmergency.model';
 import { Zone } from '../models/zone.model';
-import { ZoneSearch } from '../models/zoneSearch.model';
+import { ZoneLatest } from '../models/zone-latest.model';
+import { GetZoneResponseLatest } from '../models/getZoneResponseLatest.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,23 @@ export class TMCSService {
     return this.http.get<GetZoneResponse>(this.BaseURL + `GetZones?page=${page}&take=${takeNo}&search=${search}&deleted=${deleted}`).pipe(take(1));
   }
 
+  getZonesV1(page: number, takeNo: number, search: string, deleted: boolean): Observable<GetZoneResponseLatest> {
+    return this.http.get<GetZoneResponseLatest>(this.BaseURL + `GetZonesV1?page=${page}&take=${takeNo}&search=${search}&deleted=${deleted}`).pipe(take(1));
+  }
+
   saveZone(zone: Zone) {
     return this.http.post(this.BaseURL + `SaveZone`, zone).pipe(take(1));
   }
 
   updateZone(zone: Zone) {
+    return this.http.post(this.BaseURL + `UpdateZone`, zone).pipe(take(1));
+  }
+
+  saveZoneV1(zone: ZoneLatest) {
+    return this.http.post(this.BaseURL + `SaveZoneV1`, zone).pipe(take(1));
+  }
+
+  updateZoneV1(zone: ZoneLatest) {
     return this.http.post(this.BaseURL + `UpdateZone`, zone).pipe(take(1));
   }
 
@@ -37,15 +50,15 @@ export class TMCSService {
     return this.http.get(this.BaseURL + `RecoverZone?id=${zoneId}`).pipe(take(1));
   }
 
-  searchZoneByBlockId(blockId: number): Observable<Zone>{
+  searchZoneByBlockId(blockId: number): Observable<Zone> {
     return this.http.get<Zone>(this.BaseURL + `SearchZoneByBlockId?id=${blockId}`).pipe(take(1));
   }
 
-  activateZone(zoneId: number, blockId: number): Observable<TMCSEmergency>{
+  activateZone(zoneId: number, blockId: number): Observable<TMCSEmergency> {
     return this.http.get<TMCSEmergency>(this.BaseURL + `ActivateZone?zoneId=${zoneId}&blockId=${blockId}`).pipe(take(1));
   }
 
-  getEmergencyZones(): Observable<TMCSEmergency[]>{
+  getEmergencyZones(): Observable<TMCSEmergency[]> {
     return this.http.get<TMCSEmergency[]>(this.BaseURL + `GetEmergencyZones`).pipe(take(1));
   }
 

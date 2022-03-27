@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using OCC_Aid_App.DatabaseContext;
 using OCC_Aid_App.Interfaces;
+using OCC_Aid_App.Mapping;
 using OCC_Aid_App.Models;
 using OCC_Aid_App.Models.ViewModels;
 using OCC_Aid_App.Utilities;
@@ -14,11 +15,23 @@ namespace OCC_Aid_App.Services
 {
 	public class TMCSService : ITMCSService
 	{
-		private readonly IServiceScopeFactory<AppDatabaseContext> factory;
+		#region Members
+		private readonly AppDatabaseContext _dbContext;
+        private readonly IServiceScopeFactory<AppDatabaseContext> factory;
 		private readonly IConfiguration configuration;
 		private FileUtility utility;
-		public TMCSService(IServiceScopeFactory<AppDatabaseContext> factory, IConfiguration configuration, FileUtility utility)
+		private readonly ITypeMapper _typeMapper;
+		#endregion
+
+		public TMCSService(
+			ITypeMapper typeMapper,
+			AppDatabaseContext dbContext,
+			IServiceScopeFactory<AppDatabaseContext> factory,
+			IConfiguration configuration,
+			FileUtility utility)
 		{
+            _dbContext = dbContext;
+			_typeMapper = typeMapper;
 			this.factory = factory;
 			this.configuration = configuration;
 			this.utility = utility;
@@ -283,5 +296,91 @@ namespace OCC_Aid_App.Services
 
 			return new GetTMCSResponse { Blocks = allPossibleBlocks, Zones = zones };
 		}
+
+		#region V1
+		public async Task<bool> SaveZoneV1Async(V1_ZoneRequest zone)
+		{
+			var exists = await _dbContext.V1_Zones.FirstOrDefaultAsync(f => f.Name == zone.Name);
+			if (exists == null)
+			{
+				var zoneV1 = _typeMapper.Map<V1_ZoneRequest, V1_Zone>(zone);
+				zoneV1.ZoneBlocks = new List<V1_ZoneBlock>();
+                foreach (var block in zone.Blocks)
+                {
+					var esistingBlock = await _dbContext.V1_Blocks.FirstOrDefaultAsync(b => b.Name.ToLower() == block.Name.ToLower());
+					if(esistingBlock == null)
+                    {
+						zoneV1.ZoneBlocks.Add(new V1_ZoneBlock()
+						{
+							Block = new V1_Block()
+                            {
+								Name = block.Name,
+                            }
+						});
+					}
+                    else
+                    {
+						zoneV1.ZoneBlocks.Add(new V1_ZoneBlock()
+						{
+							BlockId = block.Id
+						});
+					}
+                }
+				zone.ZoneLayout = await utility.UploadFile(zone.ZoneLayout, "Zone_ZoneLayout", zone.Name.Replace("/", ""));
+				zone.CctvLayout = await utility.UploadFile(zone.CctvLayout, "Zone_CctvLayout", zone.Name.Replace("/", ""));
+				await _dbContext.V1_Zones.AddAsync(zoneV1);
+				await _dbContext.SaveChangesAsync();
+				return true;
+			}
+			return false;
+		}
+
+		public async Task<V1_GetZoneResponse> GetZonesV1Async(int page, int take, string search, bool Deleted)
+		{
+			if (!string.IsNullOrEmpty(search))
+			{
+				var searched = await _dbContext.V1_Zones.Where(w => w.IsDeleted == Deleted && (w.Name.Contains(search)
+				|| w.ShaftName.Contains(search) || w.ZoneBlocks.Any(a => a.Block.Name.Contains(search))))
+				.Include(z => z.ZoneBlocks).ThenInclude(zb => zb.Block)
+				.OrderByDescending(o => o.CreatedDate)
+				.Skip((page - 1) * take).Take(take)
+				.ToListAsync();
+
+				var total = await _dbContext.V1_Zones.CountAsync(w => w.IsDeleted == Deleted && (w.Name.Contains(search)
+				|| w.ShaftName.Contains(search) || w.ZoneBlocks.Any(a => a.Block.Name.Contains(search))));
+				var eesponseV1 = _typeMapper.Map<List<V1_Zone>, List<V1_ZoneResponse>>(searched);
+
+				return new V1_GetZoneResponse { Zones = eesponseV1, Total = total };
+			}
+			var zonesV1 = await _dbContext.V1_Zones.Where(w => w.IsDeleted == Deleted)
+				.Include(z=>z.ZoneBlocks).ThenInclude(zb=>zb.Block)
+				.OrderByDescending(o => o.CreatedDate)
+				.Skip((page - 1) * take).Take(take)
+				.ToListAsync();
+			var totalZones = await _dbContext.V1_Zones.CountAsync(w => w.IsDeleted == Deleted);
+
+			var zonesResponseV1 = _typeMapper.Map<List<V1_Zone>, List<V1_ZoneResponse>>(zonesV1);
+			
+			return new V1_GetZoneResponse { Zones = zonesResponseV1, Total = totalZones };
+		}
+
+		public async Task<bool> AddBlockAsync(V1_Block block)
+		{
+			var exists = await _dbContext.V1_Blocks.FirstOrDefaultAsync(f => f.Name == block.Name);
+			if (exists == null)
+			{
+				await _dbContext.V1_Blocks.AddAsync(block);
+				await _dbContext.SaveChangesAsync();
+				return true;
+			}
+			return false;
+		}
+
+		public async Task<List<V1_BlockResponse>> GetAllBlocksAsync()
+		{
+			var blocks = await _dbContext.V1_Blocks.Where(b=>b.IsDeleted == false).ToListAsync();
+			return _typeMapper.Map<List<V1_Block>, List<V1_BlockResponse>>(blocks);
+		}
+		#endregion
 	}
 }

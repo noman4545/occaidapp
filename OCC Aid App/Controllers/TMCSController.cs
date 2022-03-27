@@ -3,15 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OCC_Aid_App.Interfaces;
 using OCC_Aid_App.Models;
-using OCC_Aid_App.Models.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OCC_Aid_App.Controllers
 {
-	[Route("api/[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
 	[ApiController]
 	public class TMCSController : ControllerBase
 	{
@@ -21,7 +17,41 @@ namespace OCC_Aid_App.Controllers
 			this.service = service;
 		}
 
+		#region V1
 		[Authorize(Roles = "Admin")]
+		[HttpPost]
+		public async Task<IActionResult> SaveZoneV1(V1_ZoneRequest zone)
+		{
+			if (await service.SaveZoneV1Async(zone) == true)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpGet]
+		public async Task<IActionResult> GetZonesV1(int page, int take, string search, bool deleted)
+		{
+			return Ok(await service.GetZonesV1Async(page, take, search, deleted));
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpPost("AddBlock")]
+		public async Task<IActionResult> AddBlockAsync(V1_Block block)
+		{
+			if (await service.AddBlockAsync(block) == true)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpGet("AddBlock")]
+        public async Task<IActionResult> GetBlockAsync()
+        {
+            return Ok(await service.GetAllBlocksAsync());
+        }
+        #endregion
+
+        [Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> GetZones(int page, int take, string search, bool deleted)
 		{

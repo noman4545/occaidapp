@@ -11,6 +11,7 @@ import { TMCSAdminComponent } from './components/tmcs-admin/tmcs-admin.component
 import { LogsComponent } from './components/logs/logs.component';
 import { SMSAdminComponent } from './components/sms-admin/sms-admin.component';
 import { RegisterComponent } from './components/register/register.component';
+import { TMCSAdminComponentLatest } from './components/tmcs-admin-latest/tmcs-admin-latest.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { RegisterComponent } from './components/register/register.component';
     IOSCodesAdminComponent,
     ACIDAdminComponent,
     TMCSAdminComponent,
+    TMCSAdminComponentLatest,
     LogsComponent,
     SMSAdminComponent,
     RegisterComponent,
