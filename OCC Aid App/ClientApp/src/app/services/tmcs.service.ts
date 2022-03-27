@@ -46,6 +46,10 @@ export class TMCSService {
     return this.http.get(this.BaseURL + `DeleteZone?id=${zoneId}`).pipe(take(1));
   }
 
+  deleteZoneV1(zoneId: number) {
+    return this.http.get(this.BaseURL + `DeleteZoneV1?id=${zoneId}`).pipe(take(1));
+  }
+
   recoverZone(zoneId: number) {
     return this.http.get(this.BaseURL + `RecoverZone?id=${zoneId}`).pipe(take(1));
   }

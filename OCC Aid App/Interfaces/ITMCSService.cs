@@ -13,6 +13,7 @@ namespace OCC_Aid_App.Interfaces
 		Task<int> SaveZone(Zone zone);
 		Task<int> UpdateZone(Zone zone);
 		Task<int> DeleteZone(int id);
+		Task<int> DeleteZoneV1(int id);
 		Task<int> RecoverZone(int id);
 		Task<Zone> SearchZoneByBlockId(int blockId);
 		Task<TMCSEmergency> ActivateZone(int zoneId, int blockId);

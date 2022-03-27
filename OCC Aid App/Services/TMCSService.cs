@@ -364,6 +364,28 @@ namespace OCC_Aid_App.Services
 			return new V1_GetZoneResponse { Zones = zonesResponseV1, Total = totalZones };
 		}
 
+		public async Task<int> DeleteZoneV1(int id)
+		{
+			var zone = await _dbContext.V1_Zones
+				.Include(z=>z.ZoneBlocks).ThenInclude(zb=>zb.Block)
+				.FirstOrDefaultAsync(f => f.Id == id);
+			int res = 0;
+			if (zone != null)
+			{
+				zone.IsDeleted = true;
+				zone.DeletedDate = DateTime.Now;
+                zone.ZoneBlocks.ForEach(zoneBblock =>
+                {
+                    zoneBblock.IsDeleted = true;
+                    zoneBblock.DeletedDate = DateTime.Now;
+					zoneBblock.Block.IsDeleted = true;
+					zoneBblock.Block.DeletedDate = DateTime.Now;
+				});
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
+
 		public async Task<bool> AddBlockAsync(V1_Block block)
 		{
 			var exists = await _dbContext.V1_Blocks.FirstOrDefaultAsync(f => f.Name == block.Name);

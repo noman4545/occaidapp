@@ -127,10 +127,11 @@ export class TMCSAdminComponentLatest implements OnInit {
   }
 
   deleteZone(index: number) {
-    if (this.zones[index].zoneId) {
+    const zoneId = this.zonesLatest[index]?.id;
+    if (zoneId) {
       this.loadingDelete = true;
       this.zoneIndex = -1;
-      this.service.deleteZone(this.zones[index].zoneId as number).subscribe(res => {
+      this.service.deleteZoneV1(zoneId).subscribe(res => {
         this.toastr.success("Zone has been deleted successfully.", "Success!");
         this.loadZones();
         this.loadingDelete = false;
