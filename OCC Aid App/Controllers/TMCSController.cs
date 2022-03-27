@@ -44,6 +44,15 @@ namespace OCC_Aid_App.Controllers
 		}
 
 		[Authorize(Roles = "Admin")]
+		[HttpGet]
+		public async Task<IActionResult> RecoverZoneV1(int id)
+		{
+			if (await service.RecoverZoneV1(id) > 0)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize(Roles = "Admin")]
 		[HttpPost("AddBlock")]
 		public async Task<IActionResult> AddBlockAsync(V1_Block block)
 		{

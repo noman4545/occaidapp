@@ -43,7 +43,7 @@
                             Fan: ' + zone.rightName)}}</td>
                         <td>{{zone.shaftName}}</td>
                         <td>{{getBlocks(i)}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="!deleted">
                             <i class="bi bi-pencil-square fs-4 pointer icons"></i>
                             <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="zoneIndex = i"
                                 data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
@@ -54,12 +54,12 @@
                             <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="zoneIndex = i"
                                 data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
                         </td> -->
-                        <!-- <td class="text-center" *ngIf="deleted">
+                        <td class="text-center" *ngIf="deleted">
                             <i class="bi bi-arrow-clockwise fs-4 pointer icons" (click)="recover(i);"></i>
-                        </td> -->
+                        </td>
                     </tr>
                 </ng-container>
-                <ng-container *ngIf="zones.length == 0 && !loading">
+                <ng-container *ngIf="zonesLatest.length == 0 && !loading">
                     <tr>
                         <td colspan="9" *ngIf="!deleted" class="text-center align-middle h-400px">
                             <h4>No Zone Found. You can add new by clicking on "Add New" button.</h4>

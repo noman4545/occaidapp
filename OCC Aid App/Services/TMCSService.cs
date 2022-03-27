@@ -386,6 +386,28 @@ namespace OCC_Aid_App.Services
 			return res;
 		}
 
+		public async Task<int> RecoverZoneV1(int id)
+		{
+			var zone = await _dbContext.V1_Zones
+				.Include(z => z.ZoneBlocks).ThenInclude(zb => zb.Block)
+				.FirstOrDefaultAsync(f => f.Id == id);
+			int res = 0;
+			if (zone != null)
+			{
+				zone.IsDeleted = false;
+				zone.DeletedDate = null;
+				zone.ZoneBlocks.ForEach(zoneBblock =>
+				{
+					zoneBblock.IsDeleted = false;
+					zoneBblock.DeletedDate = null;
+					zoneBblock.Block.IsDeleted = false;
+					zoneBblock.Block.DeletedDate = null;
+				});
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
+
 		public async Task<bool> AddBlockAsync(V1_Block block)
 		{
 			var exists = await _dbContext.V1_Blocks.FirstOrDefaultAsync(f => f.Name == block.Name);

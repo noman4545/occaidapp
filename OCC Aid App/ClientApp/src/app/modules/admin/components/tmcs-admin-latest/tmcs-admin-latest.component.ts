@@ -144,8 +144,9 @@ export class TMCSAdminComponentLatest implements OnInit {
   }
 
   recover(index: number) {
-    if (this.zones[index].zoneId) {
-      this.service.recoverZone(this.zones[index].zoneId as number).subscribe(res => {
+    const zoneId = this.zonesLatest[index]?.id;
+    if (zoneId) {
+      this.service.recoverZoneV1(zoneId).subscribe(res => {
         this.toastr.success("Zone has been recovered successfully.", "Success!");
         this.loadZones();
       },
