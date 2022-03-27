@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Block } from 'src/app/models/block.model';
+import { ZoneBlocksResponseLatest } from 'src/app/models/zone-blocks-response-latest';
 import { ZoneLatest } from 'src/app/models/zone-latest.model';
 import { ZoneResponseLatest } from 'src/app/models/zone-response-latest.model';
 import { Zone } from 'src/app/models/zone.model';
@@ -47,9 +48,6 @@ export class TMCSAdminComponentLatest implements OnInit {
   loadZones() {
     this.loading = true;
     this.service.getZonesV1(this.page, this.take, this.search, this.deleted).subscribe(res => {
-      console.log("noman");
-      console.log(res);
-      console.log("noman");
       this.zonesLatest = res.zones;
       this.total = res.total;
       this.totalPages = Math.ceil(res.total / this.take);
@@ -100,7 +98,7 @@ export class TMCSAdminComponentLatest implements OnInit {
     if (!this.updateMode) {
       this.service.saveZoneV1(zone).subscribe(res => {
         this.toastr.success("Zone has been saved successfully.", "Success!");
-        //this.zonesLatest.unshift(zone);
+        this.loadZones();
         this.newForm();
         this.btn_add_edit_close?.nativeElement.click();
         this.loadingSaveEdit = false;
@@ -112,9 +110,17 @@ export class TMCSAdminComponentLatest implements OnInit {
     }
     else {
       zone.id = this.zoneId;
+      var zoneLatest = <ZoneResponseLatest>this.zonesLatest.find(z => z.id == zone.id);
+      zone.blocks.forEach(b => {
+        zoneLatest.zoneBlocks.forEach(zb => {
+          if (zb.block.name.toLowerCase() == b.name.toLowerCase()) {
+            b.id = zb.blockId ? zb.blockId : zb.block.id;
+          }
+        });
+      });
       this.service.updateZoneV1(zone).subscribe(res => {
         this.toastr.success("Zone has been updated successfully.", "Success!");
-        //this.zonesLatest[this.zonesLatest.findIndex(f => f.id == zone.id)] = zone;
+        this.loadZones();
         this.newForm();
         this.btn_add_edit_close?.nativeElement.click();
         this.loadingSaveEdit = false;
@@ -156,9 +162,23 @@ export class TMCSAdminComponentLatest implements OnInit {
     }
   }
 
-  selectZoneForEdit(zone: Zone) {
+  selectZoneForEdit(zone: ZoneResponseLatest) {
     this.updateMode = true;
-    this.zoneId = zone.zoneId ? zone.zoneId : -1;
+    this.zoneId = zone.id ? zone.id : -1;
+
+    this.form = this.fb.group({
+      'name': ['', Validators.required],
+      'fanDirection': ['', Validators.required],
+      'cctvLayout': ['', Validators.required],
+      'zoneLayout': ['', Validators.required],
+      'upName': [''],
+      'leftName': [''],
+      'rightName': [''],
+      'shaftName': [''],
+      'blocks': this.fb.array([
+        this.initBlock()
+      ])
+    });
 
     this.form = this.fb.group({
       'name': [zone.name, Validators.required],
@@ -168,21 +188,17 @@ export class TMCSAdminComponentLatest implements OnInit {
       'upName': [zone.upName],
       'leftName': [zone.leftName],
       'rightName': [zone.rightName],
-      'trackNo': [zone.trackNo, Validators.required],
-      'blocks': this.initBlockForEdit(zone.blocks)
+      'shaftName': [zone.shaftName],
+      'blocks': this.initBlockForEdit(zone.zoneBlocks)
     });
   }
 
-  initBlockForEdit(blocks: Block[]) {
+  initBlockForEdit(zoneBlocks: ZoneBlocksResponseLatest[]) {
     let groups: FormGroup[] = [];
-    blocks.forEach(block => {
+    zoneBlocks.forEach(zoneBlock => {
       groups.push(this.fb.group({
-        'blockId': block.blockId,
-        'name': [block.name, Validators.required],
-        'startLength': [block.startLength, [Validators.required, Validators.min(0)]],
-        'endLength': [block.endLength, [Validators.required, Validators.min(1)]],
-        'shaftName': block.shaftName,
-        'zoneId': this.zoneId
+        'blockId': zoneBlock.block.id,
+        'name': [zoneBlock.block.name, Validators.required]
       }));
     });
     return this.fb.array(groups);

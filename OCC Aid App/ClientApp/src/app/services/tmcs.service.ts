@@ -39,7 +39,7 @@ export class TMCSService {
   }
 
   updateZoneV1(zone: ZoneLatest) {
-    return this.http.post(this.BaseURL + `UpdateZone`, zone).pipe(take(1));
+    return this.http.post(this.BaseURL + `UpdateZoneV1`, zone).pipe(take(1));
   }
 
   deleteZone(zoneId: number) {

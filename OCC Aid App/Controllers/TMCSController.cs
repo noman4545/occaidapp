@@ -28,6 +28,15 @@ namespace OCC_Aid_App.Controllers
 		}
 
 		[Authorize(Roles = "Admin")]
+		[HttpPost]
+		public async Task<IActionResult> UpdateZoneV1(V1_ZoneRequest zone)
+		{
+			if (await service.UpdateZoneV1(zone) > 0)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> GetZonesV1(int page, int take, string search, bool deleted)
 		{

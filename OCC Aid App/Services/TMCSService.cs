@@ -322,7 +322,7 @@ namespace OCC_Aid_App.Services
                     {
 						zoneV1.ZoneBlocks.Add(new V1_ZoneBlock()
 						{
-							BlockId = block.Id
+							BlockId = esistingBlock.Id
 						});
 					}
                 }
@@ -334,6 +334,101 @@ namespace OCC_Aid_App.Services
 			}
 			return false;
 		}
+
+		public async Task<int> UpdateZoneV1(V1_ZoneRequest zone)
+		{
+			int res = 0;
+			var strategy = _dbContext.Database.CreateExecutionStrategy();
+			await strategy.ExecuteAsync(async () =>
+			{
+				var existingZone = await _dbContext.V1_Zones
+				.Include(z => z.ZoneBlocks).ThenInclude(zb => zb.Block)
+				.FirstOrDefaultAsync(f => f.Id == zone.Id);
+				if (existingZone != null)
+				{
+					existingZone.ModifyDate = DateTime.Now;
+					existingZone.Name = zone.Name;
+					existingZone.ShaftName = zone.ShaftName;
+					existingZone.FanDirection = zone.FanDirection;
+                    if (zone.FanDirection.Equals("Left/Right"))
+                    {
+						existingZone.UpName = string.Empty;
+						existingZone.LeftName = zone.LeftName;
+						existingZone.RightName = zone.RightName;
+					}
+                    else
+                    {
+						existingZone.LeftName = string.Empty;
+						existingZone.RightName = string.Empty;
+						existingZone.UpName = zone.UpName;
+					}
+					
+					if (zone.ZoneLayout.Contains("base64"))
+					{
+						existingZone.ZoneLayout = zone.ZoneLayout;
+						zone.ZoneLayout = await utility.UploadFile(zone.ZoneLayout, "Zone_ZoneLayout", zone.Name.Replace("/", ""));
+					}
+
+					if (zone.CctvLayout.Contains("base64"))
+					{
+						existingZone.CctvLayout = zone.CctvLayout;
+						zone.CctvLayout = await utility.UploadFile(zone.CctvLayout, "Zone_CctvLayout", zone.Name.Replace("/", ""));
+					}
+
+					var removedBlocks = new List<V1_ZoneBlock>();
+					existingZone.ZoneBlocks.ForEach(zoneBlock =>
+					{
+						if (zone.Blocks == null)
+							removedBlocks.Add(zoneBlock);
+						else if (!zone.Blocks.Any(b => b.Name.ToLower().Equals(zoneBlock.Block.Name.ToLower())))
+							removedBlocks.Add(zoneBlock);
+					});
+
+					removedBlocks.ForEach(zoneBlock => existingZone.ZoneBlocks.Remove(zoneBlock));
+
+					if (zone.Blocks != null)
+					{
+						zone.Blocks.ForEach(block =>
+						{
+							if (block.Id > 0)
+							{
+								var zoneBlock = existingZone.ZoneBlocks.FirstOrDefault(zb => zb.Block.Id == block.Id);
+								if (zoneBlock.Block.Name != block.Name)
+								{
+									zoneBlock.Block.Name = block.Name;
+									zoneBlock.Block.ModifyDate = DateTime.Now;
+									zoneBlock.ModifyDate = DateTime.Now;
+
+								}
+							}
+							else
+							{
+								var esistingBlock = _dbContext.V1_Blocks.FirstOrDefault(b => b.Name == block.Name);
+								if (esistingBlock == null)
+								{
+									existingZone.ZoneBlocks.Add(new V1_ZoneBlock()
+									{
+										Block = new V1_Block()
+										{
+											Name = block.Name,
+										}
+									});
+								}
+								else
+								{
+									existingZone.ZoneBlocks.Add(new V1_ZoneBlock()
+									{
+										BlockId = esistingBlock.Id
+									});
+								}
+							}
+						});
+					}
+                }
+				res = await _dbContext.SaveChangesAsync();
+			});
+			return res;
+        }
 
 		public async Task<V1_GetZoneResponse> GetZonesV1Async(int page, int take, string search, bool Deleted)
 		{

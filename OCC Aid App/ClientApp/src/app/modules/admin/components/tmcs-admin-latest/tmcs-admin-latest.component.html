@@ -30,8 +30,7 @@
                     <th>Fan Direction Name</th>
                     <th>Shaft</th>
                     <th>Blocks</th>
-                    <th class="w-120px text-center" *ngIf="!deleted">Actions</th>
-                    <!-- <th class="w-120px" *ngIf="deleted">Recover</th> -->
+                    <th class="w-120px text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,16 +43,11 @@
                         <td>{{zone.shaftName}}</td>
                         <td>{{getBlocks(i)}}</td>
                         <td class="text-center" *ngIf="!deleted">
-                            <i class="bi bi-pencil-square fs-4 pointer icons"></i>
-                            <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="zoneIndex = i"
-                                data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
-                        </td>
-                        <!-- <td class="text-center" *ngIf="!deleted">
                             <i class="bi bi-pencil-square fs-4 pointer icons"
                                 (click)="selectZoneForEdit(zone);btn_add_edit_modal.click();"></i>
                             <i class="bi bi-trash-fill fs-4 ms-2 pointer icons" (click)="zoneIndex = i"
                                 data-bs-toggle="modal" data-bs-target="#delete_modal"></i>
-                        </td> -->
+                        </td>
                         <td class="text-center" *ngIf="deleted">
                             <i class="bi bi-arrow-clockwise fs-4 pointer icons" (click)="recover(i);"></i>
                         </td>
@@ -269,7 +263,7 @@
                         [disabled]="!form.valid || loadingSaveEdit || !fanDirectionValidation()">
                         <span class="spinner-border spinner-border-sm" *ngIf="loadingSaveEdit" role="status"
                             aria-hidden="true"></span>
-                        {{updateMode ? 'Update' : 'Save'}} {{form.valid}}
+                        {{updateMode ? 'Update' : 'Save'}}
                     </button>
                 </div>
 

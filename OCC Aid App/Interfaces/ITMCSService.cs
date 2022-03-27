@@ -12,6 +12,7 @@ namespace OCC_Aid_App.Interfaces
 		Task<GetZoneResponse> GetZones(int page, int take, string search, bool deleted);
 		Task<int> SaveZone(Zone zone);
 		Task<int> UpdateZone(Zone zone);
+		Task<int> UpdateZoneV1(V1_ZoneRequest zone);
 		Task<int> DeleteZone(int id);
 		Task<int> DeleteZoneV1(int id);
 		Task<int> RecoverZoneV1(int id);
