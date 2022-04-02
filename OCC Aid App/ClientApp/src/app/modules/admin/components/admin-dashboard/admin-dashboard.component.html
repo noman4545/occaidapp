@@ -24,8 +24,17 @@
                                 class="{{rla1.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span
                                 class="ms-2">ACID CCTV</span></a>
                     </li>
-                    <li>
+                    <!-- Old TMCS -->
+                    <!-- <li>
                         <a routerLink="tmcs" routerLinkActive #rla2="routerLinkActive"
+                            class="{{!rla2.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
+                            <i
+                                class="{{rla2.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span
+                                class="ms-2">TMCS</span></a>
+                    </li> -->
+                    <!-- Latest TMCS -->
+                    <li>
+                        <a routerLink="tmcs-latest" routerLinkActive #rla2="routerLinkActive"
                             class="{{!rla2.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
                             <i
                                 class="{{rla2.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span
@@ -58,13 +67,6 @@
                             <i
                                 class="{{rla6.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span
                                 class="ms-2">Manage Users</span></a>
-                    </li>
-                    <li>
-                        <a routerLink="tmcs-latest" routerLinkActive #rla2="routerLinkActive"
-                            class="{{!rla2.isActive ? 'nav-link-override' : ''}} nav-link px-lg-0 px-2">
-                            <i
-                                class="{{rla2.isActive ? 'bi-arrow-right-circle-fill' : 'bi-arrow-right-circle'}} fs-5"></i><span
-                                class="ms-2">TMCS</span></a>
                     </li>
                 </ul>
             </div>

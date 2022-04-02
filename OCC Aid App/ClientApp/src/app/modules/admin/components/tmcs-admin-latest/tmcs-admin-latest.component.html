@@ -129,41 +129,6 @@
 
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="row mt-2">
-                            <div class="col-md-12">
-                                <h3>Blocks <i class="bi bi-plus pointer text-success" (click)="newBlock()"></i></h3>
-                            </div>
-                        </div>
-                        <div class="row" formArrayName="blocks">
-                            <div class="col-md-12 mx-auto">
-                                <ng-container *ngFor="let block of $any(form.controls.blocks).controls; let j = index;">
-                                    <div class="row" [formGroupName]="j">
-                                        <div class="col-md-6 mt-2">
-                                            <label for="blockName{{j}}" class="form-label">Block Name</label>
-                                            <input type="text"
-                                                class="{{block.get('name')?.touched ? (block.get('name')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control"
-                                                id="blockName{{j}}" placeholder="E.g: B_599" formControlName="name">
-                                            <div class="invalid-feedback"
-                                                *ngIf="block.get('name')?.touched && block.get('name')?.hasError('required')">
-                                                Block Name is required.
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-none d-md-block" *ngIf="j > 0">
-                                            <i class="bi bi-x-lg pointer text-danger fs-4" (click)="removeBlock(j)"></i>
-                                        </div>
-                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-md-none d-block" *ngIf="j > 0">
-                                            <div class="d-grid">
-                                                <button type="button" class="btn btn-danger"
-                                                    (click)="removeBlock(j)">Remove Block</button>
-                                            </div>
-                                            <hr class="w-100 d-md-none d-block">
-                                        </div>
-                                    </div>
-                                </ng-container>
-                            </div>
-                        </div>
-                        <hr />
-
                         <div class="row">
                             <div
                                 [class]="form.get('fanDirection')?.value == 'Left/Right' ? 'col-md-3 mt-2' : 'col-md-4 mt-2'">
@@ -251,6 +216,40 @@
                                     (change)="cctvLayoutUpload($event)">
                                 <input type="text" class="form-control d-none" id="cctvlayout"
                                     formControlName="cctvLayout">
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <h3>Blocks <i class="bi bi-plus pointer text-success" (click)="newBlock()"></i></h3>
+                            </div>
+                        </div>
+                        <div class="row" formArrayName="blocks">
+                            <div class="col-md-12 mx-auto">
+                                <ng-container *ngFor="let block of $any(form.controls.blocks).controls; let j = index;">
+                                    <div class="row" [formGroupName]="j">
+                                        <div class="col-md-10 mt-2">
+                                            <label for="blockName{{j}}" class="form-label">Block Name</label>
+                                            <input type="text"
+                                                class="{{block.get('name')?.touched ? (block.get('name')?.hasError('required') ? 'is-invalid' : 'is-valid') : (updateMode ? 'is-valid' : '')}} form-control"
+                                                id="blockName{{j}}" placeholder="E.g: B_599" formControlName="name">
+                                            <div class="invalid-feedback"
+                                                *ngIf="block.get('name')?.touched && block.get('name')?.hasError('required')">
+                                                Block Name is required.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-none d-md-block" *ngIf="j > 0">
+                                            <i class="bi bi-x-lg pointer text-danger fs-4" (click)="removeBlock(j)"></i>
+                                        </div>
+                                        <div class="col-md-1 mt-2 align-self-end mb-1 d-md-none d-block" *ngIf="j > 0">
+                                            <div class="d-grid">
+                                                <button type="button" class="btn btn-danger"
+                                                    (click)="removeBlock(j)">Remove Block</button>
+                                            </div>
+                                            <hr class="w-100 d-md-none d-block">
+                                        </div>
+                                    </div>
+                                </ng-container>
                             </div>
                         </div>
                     </div>
