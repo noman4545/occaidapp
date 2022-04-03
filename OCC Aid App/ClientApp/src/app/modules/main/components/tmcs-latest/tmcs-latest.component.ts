@@ -14,6 +14,7 @@ import { Token } from 'src/app/models/token.model';
 import { BlockLatest } from 'src/app/models/block-latest.model';
 import { ZoneLatest } from 'src/app/models/zone-latest.model';
 import { ZoneResponseLatest } from 'src/app/models/zone-response-latest.model';
+import { TMCSEmergencyLatest } from 'src/app/models/tmcsEmergencyLatest.model';
 
 @Component({
   selector: 'app-tmcs-latest',
@@ -26,6 +27,9 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
   zone: Zone | undefined;
   tmcsEmergency: TMCSEmergency[] = [];
   selectedTMCSEmergency: TMCSEmergency | undefined;
+
+  tmcsEmergencyLatest: TMCSEmergencyLatest[] = [];
+  selectedTMCSEmergencyLatest: TMCSEmergencyLatest | undefined;
 
   activatedMessage: string = '';
   activatedMessage2: string = '';
@@ -143,8 +147,8 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
 
   loadEmergencyZones() {
     this.loading = true;
-    this.service.getEmergencyZones().subscribe(res => {
-      this.tmcsEmergency = res;
+    this.service.getEmergencyZonesV1().subscribe(res => {
+      this.tmcsEmergencyLatest = res;
       this.loading = false;
     },
       err => {
@@ -154,39 +158,43 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
   }
 
   getZoneDetails(index: number) {
-    this.selectedTMCSEmergency = this.tmcsEmergency[index];
+    this.selectedTMCSEmergencyLatest = this.tmcsEmergencyLatest[index];
   }
 
   markAsComplete() {
-    if (this.selectedTMCSEmergency && this.selectedTMCSEmergency.id) {
-      this.service.markAsComplete(this.selectedTMCSEmergency.id).subscribe(res => {
-        this.notify.markCompleteTMCSToHub(this.selectedTMCSEmergency?.id)
-        this.loadEmergencyZones();
-        this.dropdownValue = "";
-        this.toaster.success("Zone has been deactivated and marked as complete.");
-        this.log.log("TMCS", `${this.token?.email} has marked the zone "${this.selectedTMCSEmergency?.zone.name}" complete.`);
-        this.selectedTMCSEmergency = undefined;
-      },
-        err => {
-          this.toaster.error("Unable to mark zone as complete.");
-        });
+    if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
+      if (this.selectedTMCSEmergencyLatest.efcMarkedCompleted) {
+        this.service.markAsCompleteV1(this.selectedTMCSEmergencyLatest.id).subscribe(res => {
+          this.notify.markCompleteTMCSToHub(this.selectedTMCSEmergency?.id)
+          this.loadEmergencyZones();
+          this.dropdownValue = "";
+          this.toaster.success("Zone has been deactivated and marked as complete.");
+          this.log.log("TMCS", `${this.token?.email} has marked the zone "${this.selectedTMCSEmergencyLatest?.zone.name}" complete.`);
+          this.selectedTMCSEmergencyLatest = undefined;
+        },
+          err => {
+            this.toaster.error("Unable to mark zone as complete.");
+          });
+      } else {
+        this.toaster.info(`The EFC has not yet marked "${this.selectedTMCSEmergencyLatest?.zone.name}" as complete.`);
+      }
     }
   }
 
   selectFanDirection(direction: string) {
-    if (this.selectedTMCSEmergency && this.selectedTMCSEmergency.id) {
-      this.service.selectFanDirection(this.selectedTMCSEmergency.id, direction).subscribe(res => {
-        if (this.selectedTMCSEmergency) {
-          this.selectedTMCSEmergency.dmDecision = direction;
-          this.tmcsEmergency[this.tmcsEmergency.findIndex(f => f.id == this.selectedTMCSEmergency?.id)] = this.selectedTMCSEmergency;
-          this.dropdownValue = this.tmcsEmergency.findIndex(f => f.id == this.selectedTMCSEmergency?.id).toString();
-          this.notify.sendTMCSToHub(this.selectedTMCSEmergency);
-          if (this.selectedTMCSEmergency.dmDecision.toLowerCase() == 'right')
-            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergency.zone.rightName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
-          else if (this.selectedTMCSEmergency.dmDecision.toLowerCase() == 'left')
-            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergency.zone.leftName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
+    if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
+      this.service.selectFanDirectionV1(this.selectedTMCSEmergencyLatest.id, direction).subscribe(res => {
+        if (this.selectedTMCSEmergencyLatest) {
+          this.selectedTMCSEmergencyLatest.dmDecision = direction;
+          this.tmcsEmergencyLatest[this.tmcsEmergencyLatest.findIndex(f => f.id == this.selectedTMCSEmergencyLatest?.id)] = this.selectedTMCSEmergencyLatest;
+          this.dropdownValue = this.tmcsEmergencyLatest.findIndex(f => f.id == this.selectedTMCSEmergencyLatest?.id).toString();
+          this.notify.sendTMCSToHub(this.selectedTMCSEmergencyLatest);
+          if (this.selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'right')
+            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergencyLatest.zone.rightName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
+          else if (this.selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'left')
+            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergencyLatest.zone.leftName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
           else
-            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergency.zone.upName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
+            this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergencyLatest.zone.upName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
         }
         this.toaster.success("EFC has been notified about your decision.");
       },
@@ -232,5 +240,6 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
     this.form?.controls["blocks"].setValue("");
     this.activatedMessage = '';
     this.activatedMessage2 = '';
+    this.selectedTMCSEmergencyLatest = undefined;
   }
 }
