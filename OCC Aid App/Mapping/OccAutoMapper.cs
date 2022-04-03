@@ -3,10 +3,10 @@ using OCC_Aid_App.Models;
 
 namespace OCC_Aid_App.Mapping
 {
-    public class RegisterationAutoMapper : ITypeMapper
+    public class OccAutoMapper : ITypeMapper
     {
         #region Constructor
-        public RegisterationAutoMapper()
+        public OccAutoMapper()
         {
             CreateMappingConfiguration();
         }
@@ -32,6 +32,7 @@ namespace OCC_Aid_App.Mapping
                 cfg.CreateMap<V1_Block, V1_BlockResponse>().ReverseMap();
                 cfg.CreateMap<V1_Zone, V1_ZoneResponse>().ReverseMap();
                 cfg.CreateMap<V1_ZoneBlock, V1_ZoneBlockResponse>().ReverseMap();
+                cfg.CreateMap<V1_TMCSEmergency, V1_TMCSEmergencyResponse>().ReverseMap();
 
             });
             Mapper = config.CreateMapper();

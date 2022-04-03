@@ -25,6 +25,7 @@ import { LoginGuard } from '../auth/authGuard/login.guard';
 import { AuthGuard } from '../auth/authGuard/auth.guard';
 import { AdminGuard } from '../auth/authGuard/admin.guard';
 import { RequestInterceptor } from 'src/app/interceptors/request.interceptor';
+import { TMCSLatestComponent } from './components/tmcs-latest/tmcs-latest.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { RequestInterceptor } from 'src/app/interceptors/request.interceptor';
     MainComponent,
     CentralComponent,
     TMCSComponent,
+    TMCSLatestComponent,
     SMSComponent
   ],
   imports: [
@@ -46,10 +48,10 @@ import { RequestInterceptor } from 'src/app/interceptors/request.interceptor';
     HttpClientModule,
     ToastrModule.forRoot()
   ],
-  providers: [IOSCodesService, ACIDService, NotificationService, 
-              LoggingService, NotifyTMCSService, SMSService, 
-              AuthenticationService, LoginGuard, AuthGuard, AdminGuard,
-              { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}],
+  providers: [IOSCodesService, ACIDService, NotificationService,
+    LoggingService, NotifyTMCSService, SMSService,
+    AuthenticationService, LoginGuard, AuthGuard, AdminGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

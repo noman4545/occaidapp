@@ -19,12 +19,14 @@ namespace OCC_Aid_App.Interfaces
 		Task<int> RecoverZone(int id);
 		Task<Zone> SearchZoneByBlockId(int blockId);
 		Task<TMCSEmergency> ActivateZone(int zoneId, int blockId);
+		Task<V1_TMCSEmergencyResponse> ActivateZoneV1Async(int zoneId, int blockId);
 		Task<List<TMCSEmergency>> GetEmergencyZones();
 		Task<int> MarkAsComplete(int id);
 		Task<int> SelectFanDirection(int id, string direction);
 		Task<GetTMCSResponse> GetPossibleExt1Blocks(int ext1);
 		Task<bool> AddBlockAsync(V1_Block block);
 		Task<List<V1_BlockResponse>> GetAllBlocksAsync();
+		Task<List<V1_ZoneResponse>> GetBlockZonesAsync(int blockId);
 		Task<bool> SaveZoneV1Async(V1_ZoneRequest zone);
 		Task<V1_GetZoneResponse> GetZonesV1Async(int page, int take, string search, bool Deleted);
 	}

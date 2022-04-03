@@ -9,20 +9,24 @@ import { MainComponent } from './components/main/main.component';
 import { SMSComponent } from './components/sms/sms.component';
 import { TMCSComponent } from './components/tmcs/tmcs.component';
 import { AuthGuard } from '../auth/authGuard/auth.guard';
+import { TMCSLatestComponent } from './components/tmcs-latest/tmcs-latest.component';
 
 const routes: Routes = [
-  {path: '', pathMatch: 'full', redirectTo: 'auth'},
-  {path: 'main', component: MainComponent, children: [
-    {path: '', pathMatch: 'full', redirectTo: 'ios-codes' },
-    {path: 'ios-codes', component: IOSCodesComponent, canActivate: [AuthGuard] },
-    {path: 'acid-cctv', component: ACIDComponent, canActivate: [AuthGuard] },
-    {path: 'tmcs', component: TMCSComponent, canActivate: [AuthGuard] },
-    {path: 'sms', component: SMSComponent, canActivate: [AuthGuard] },
-  ] },
-  {path: 'central', component: CentralComponent, canActivate: [AuthGuard] },
-  {path: 'admin-controls', loadChildren: () => import('../admin/admin.module').then(m => m.AdminModule) },
-  {path: 'auth', loadChildren: () => import('../auth/auth.module').then(m => m.AuthModule) },
-  {path: '**', component: ErrorComponent}
+  { path: '', pathMatch: 'full', redirectTo: 'auth' },
+  {
+    path: 'main', component: MainComponent, children: [
+      { path: '', pathMatch: 'full', redirectTo: 'ios-codes' },
+      { path: 'ios-codes', component: IOSCodesComponent, canActivate: [AuthGuard] },
+      { path: 'acid-cctv', component: ACIDComponent, canActivate: [AuthGuard] },
+      { path: 'tmcs', component: TMCSComponent, canActivate: [AuthGuard] },
+      { path: 'tmcs-latest', component: TMCSLatestComponent, canActivate: [AuthGuard] },
+      { path: 'sms', component: SMSComponent, canActivate: [AuthGuard] },
+    ]
+  },
+  { path: 'central', component: CentralComponent, canActivate: [AuthGuard] },
+  { path: 'admin-controls', loadChildren: () => import('../admin/admin.module').then(m => m.AdminModule) },
+  { path: 'auth', loadChildren: () => import('../auth/auth.module').then(m => m.AuthModule) },
+  { path: '**', component: ErrorComponent }
 ];
 
 @NgModule({

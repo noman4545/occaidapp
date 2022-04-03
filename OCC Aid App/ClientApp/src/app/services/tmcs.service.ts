@@ -9,6 +9,8 @@ import { TMCSEmergency } from '../models/tmcsEmergency.model';
 import { Zone } from '../models/zone.model';
 import { ZoneLatest } from '../models/zone-latest.model';
 import { GetZoneResponseLatest } from '../models/getZoneResponseLatest.model';
+import { BlockLatest } from '../models/block-latest.model';
+import { ZoneResponseLatest } from '../models/zone-response-latest.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,10 @@ export class TMCSService {
     return this.http.get<TMCSEmergency>(this.BaseURL + `ActivateZone?zoneId=${zoneId}&blockId=${blockId}`).pipe(take(1));
   }
 
+  activateZoneV1(zoneId: number, blockId: number): Observable<TMCSEmergency> {
+    return this.http.get<TMCSEmergency>(this.BaseURL + `ActivateZoneV1?zoneId=${zoneId}&blockId=${blockId}`).pipe(take(1));
+  }
+
   getEmergencyZones(): Observable<TMCSEmergency[]> {
     return this.http.get<TMCSEmergency[]>(this.BaseURL + `GetEmergencyZones`).pipe(take(1));
   }
@@ -80,5 +86,13 @@ export class TMCSService {
 
   getPossibleExt1Blocks(ext1: number): Observable<GetTMCSResponse> {
     return this.http.get<GetTMCSResponse>(this.BaseURL + `GetPossibleExt1Blocks?ext1=${ext1}`).pipe(take(1));
+  }
+
+  loadAllBlocksV1(): Observable<BlockLatest[]> {
+    return this.http.get<BlockLatest[]>(this.BaseURL + 'GetBlocksV1').pipe(take(1));
+  }
+
+  loadBlockZonesV1(blockId: number): Observable<ZoneResponseLatest[]> {
+    return this.http.get<ZoneResponseLatest[]>(this.BaseURL + `GetBlockZonesV1?blockId=${blockId}`).pipe(take(1));
   }
 }

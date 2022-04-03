@@ -55,7 +55,7 @@ namespace OCC_Aid_App.Services
 			}
 			return null;
 		}
-
+		
 		public async Task<int> DeleteZone(int id)
 		{
 			using var scope = factory.CreateScope();
@@ -519,6 +519,37 @@ namespace OCC_Aid_App.Services
 		{
 			var blocks = await _dbContext.V1_Blocks.Where(b=>b.IsDeleted == false).ToListAsync();
 			return _typeMapper.Map<List<V1_Block>, List<V1_BlockResponse>>(blocks);
+		}
+
+        public async Task<List<V1_ZoneResponse>> GetBlockZonesAsync(int blockId)
+        {
+            var zoneBlocks = await _dbContext.V1_ZoneBlocks
+                .Where(zb => !zb.IsDeleted && !zb.Zone.IsDeleted && zb.BlockId == blockId)
+                .Include(b => b.Zone).ToListAsync();
+            var zones = zoneBlocks.Select(b => b.Zone).Distinct().ToList();
+            return _typeMapper.Map<List<V1_Zone>, List<V1_ZoneResponse>>(zones);
+        }
+
+		public async Task<V1_TMCSEmergencyResponse> ActivateZoneV1Async(int zoneId, int blockId)
+		{
+			var exists = await _dbContext.V1_TMCSEmergencies.Where(w => w.ZoneId == zoneId && !w.Completed).ToListAsync();
+			if (exists.Count() == 0)
+			{
+				var tmcsEmergency = new V1_TMCSEmergency
+				{
+					ZoneId = zoneId,
+					BlockId = blockId
+				};
+				await _dbContext.V1_TMCSEmergencies.AddAsync(tmcsEmergency);
+				int res = await _dbContext.SaveChangesAsync();
+				if (res > 0)
+                {
+					var tEmergency = await _dbContext.V1_TMCSEmergencies.Include(tmcs => tmcs.Zone).Include(tmcs => tmcs.Block).FirstOrDefaultAsync(f => f.Id == tmcsEmergency.Id);
+					return _typeMapper.Map<V1_TMCSEmergency, V1_TMCSEmergencyResponse>(tEmergency);
+				}
+				return null;
+			}
+			return null;
 		}
 		#endregion
 	}

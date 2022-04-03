@@ -18,6 +18,7 @@ namespace OCC_Aid_App.DatabaseContext
 		public DbSet<V1_Zone> V1_Zones { get; set; }
 		public DbSet<V1_Block> V1_Blocks { get; set; }
 		public DbSet<V1_ZoneBlock> V1_ZoneBlocks { get; set; }
+		public DbSet<V1_TMCSEmergency> V1_TMCSEmergencies { get; set; }
 		#endregion
 
 		public AppDatabaseContext(DbContextOptions<AppDatabaseContext> options) : base(options)

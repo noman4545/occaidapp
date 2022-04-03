@@ -61,7 +61,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.User.RequireUniqueEmail = true;
 });
 
-builder.Services.AddSingleton<ITypeMapper, RegisterationAutoMapper>();
+builder.Services.AddSingleton<ITypeMapper, OccAutoMapper>();
 builder.Services.AddSingleton<IServiceScopeFactory<AppDatabaseContext>, ServiceScopeFactory<AppDatabaseContext>>();
 builder.Services.AddSingleton<IServiceScopeFactory<UserManager<User>>, ServiceScopeFactory<UserManager<User>>>();
 builder.Services.AddSingleton<IServiceScopeFactory<RoleManager<IdentityRole>>, ServiceScopeFactory<RoleManager<IdentityRole>>>();

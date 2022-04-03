@@ -62,23 +62,40 @@ namespace OCC_Aid_App.Controllers
 		}
 
 		[Authorize(Roles = "Admin")]
-		[HttpPost("AddBlock")]
-		public async Task<IActionResult> AddBlockAsync(V1_Block block)
+		[HttpPost]
+		public async Task<IActionResult> AddBlockV1(V1_Block block)
 		{
 			if (await service.AddBlockAsync(block) == true)
 				return Ok();
 			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
 
-		[Authorize(Roles = "Admin")]
-		[HttpGet("AddBlock")]
-        public async Task<IActionResult> GetBlockAsync()
+		[Authorize]
+		[HttpGet]
+        public async Task<IActionResult> GetBlocksV1()
         {
             return Ok(await service.GetAllBlocksAsync());
         }
-        #endregion
 
-        [Authorize(Roles = "Admin")]
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetBlockZonesV1(int blockId)
+		{
+			return Ok(await service.GetBlockZonesAsync(blockId));
+		}
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> ActivateZoneV1(int zoneId, int blockId)
+		{
+			var tmcs = await service.ActivateZoneV1Async(zoneId, blockId);
+			if (tmcs != null)
+				return Ok(tmcs);
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+		#endregion
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> GetZones(int page, int take, string search, bool deleted)
 		{
