@@ -93,6 +93,31 @@ namespace OCC_Aid_App.Controllers
 				return Ok(tmcs);
 			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetEmergencyZonesV1()
+		{
+			return Ok(await service.GetEmergencyZonesV1Async());
+		}
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> SelectFanDirectionV1(int id, string direction)
+		{
+			if (await service.SelectFanDirectionV1Async(id, direction) > 0)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> MarkAsCompleteV1(int id)
+		{
+			if (await service.MarkAsCompleteV1Async(id) > 0)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
 		#endregion
 
 		[Authorize(Roles = "Admin")]

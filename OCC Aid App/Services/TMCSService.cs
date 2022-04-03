@@ -551,6 +551,37 @@ namespace OCC_Aid_App.Services
 			}
 			return null;
 		}
+
+		public async Task<List<V1_TMCSEmergencyResponse>> GetEmergencyZonesV1Async()
+		{
+			var tmcsEmergencies = await _dbContext.V1_TMCSEmergencies.Where(w => !w.Completed)
+				.Include(te=>te.Zone).Include(te => te.Block).ToListAsync();
+            return _typeMapper.Map<List<V1_TMCSEmergency>, List<V1_TMCSEmergencyResponse>>(tmcsEmergencies);
+        }
+
+		public async Task<int> SelectFanDirectionV1Async(int id, string direction)
+		{
+			var tmcs = await _dbContext.V1_TMCSEmergencies.FindAsync(id);
+			int res = 0;
+			if (tmcs != null)
+			{
+				tmcs.DmDecision = direction;
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
+
+		public async Task<int> MarkAsCompleteV1Async(int id)
+		{
+			var tmcs = await _dbContext.V1_TMCSEmergencies.FindAsync(id);
+			int res = 0;
+			if (tmcs != null)
+			{
+				tmcs.Completed = true;
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
 		#endregion
 	}
 }

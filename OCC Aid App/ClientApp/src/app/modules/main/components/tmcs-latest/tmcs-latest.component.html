@@ -114,18 +114,18 @@
             </div>
         </div>
     </div>
-    <div class="row mt-4" *ngIf="!loading">
+    <div class="row mt-4">
         <div class="col-md-4 mx-auto">
             <select class="form-select" [(ngModel)]="dropdownValue"
                 (change)="getZoneDetails($any($event.target).value)">
                 <option value="">Select Activated Zone</option>
-                <ng-container *ngFor="let az of tmcsEmergency; let i = index;">
+                <ng-container *ngFor="let az of tmcsEmergencyLatest; let i = index;">
                     <option value="{{i}}">{{az.zone.name}}</option>
                 </ng-container>
             </select>
         </div>
     </div>
-    <div class="row mt-4 mb-4" *ngIf="selectedTMCSEmergency">
+    <div class="row mt-4 mb-4" *ngIf="selectedTMCSEmergencyLatest">
         <div class="col-md-10 mb-4 mx-auto card shadow-lg p-4">
             <div class="row">
                 <div class="col">
@@ -141,22 +141,22 @@
             </div>
             <div class="row">
                 <div class="col-md-12 text-center text-danger">
-                    <h2>"{{selectedTMCSEmergency.zone.name}}" has been activated.</h2>
-                    <h4>Train is in Track No "{{selectedTMCSEmergency.zone.trackNo}}" in block
-                        "{{selectedTMCSEmergency.block.name}}"{{selectedTMCSEmergency.block.shaftName != '' ? ' and
-                        there is a shaft "' + selectedTMCSEmergency.block.shaftName + '".' : '.'}}</h4>
+                    <h2>"{{selectedTMCSEmergencyLatest.zone.name}}" has been activated.</h2>
+                    <h4>Train is in block
+                        "{{selectedTMCSEmergencyLatest.block.name}}"{{selectedTMCSEmergencyLatest.zone.shaftName ?
+                        ' and there is a shaft "' + selectedTMCSEmergencyLatest.zone.shaftName + '".' : '.'}}</h4>
                 </div>
             </div>
             <div class="row mt-2"
-                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergency.dmDecision || selectedTMCSEmergency.dmDecision == '')">
+                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergencyLatest.dmDecision || selectedTMCSEmergencyLatest.dmDecision == '')">
                 <div class="col-md-10 mx-auto text-center">
-                    <h4>The zone has Fan Direction {{selectedTMCSEmergency.zone.fanDirection}}, please select the
+                    <h4>The zone has Fan Direction {{selectedTMCSEmergencyLatest.zone.fanDirection}}, please select the
                         decided direction to let EFC know.</h4>
                 </div>
             </div>
             <div class="row"
-                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergency.dmDecision || selectedTMCSEmergency.dmDecision == '')">
-                <ng-container *ngIf="selectedTMCSEmergency.zone.fanDirection.toLowerCase() == 'left/right'">
+                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergencyLatest.dmDecision || selectedTMCSEmergencyLatest.dmDecision == '')">
+                <ng-container *ngIf="selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'left/right'">
                     <div class="col-6 mx-auto">
                         <div class="row">
                             <div class="col-md-6 mt-2 text-center">
@@ -164,7 +164,7 @@
                                     <img src="assets/images/arrow-left.png" (click)="selectFanDirection('Left')"
                                         class="img-fluid pointer" width="100" alt="">
                                     <span class="arrow-text pointer"
-                                        (click)="selectFanDirection('Left')">{{selectedTMCSEmergency.zone.leftName}}</span>
+                                        (click)="selectFanDirection('Left')">{{selectedTMCSEmergencyLatest.zone.leftName}}</span>
                                 </div>
                             </div>
                             <div class="col-md-6 mt-2 text-center">
@@ -172,65 +172,74 @@
                                     <img src="assets/images/arrow-right.png" (click)="selectFanDirection('Right')"
                                         class="img-fluid pointer" width="100" alt="">
                                     <span class="arrow-text pointer"
-                                        (click)="selectFanDirection('Right')">{{selectedTMCSEmergency.zone.rightName}}</span>
+                                        (click)="selectFanDirection('Right')">{{selectedTMCSEmergencyLatest.zone.rightName}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngIf="selectedTMCSEmergency.zone.fanDirection.toLowerCase() == 'up'">
+                <ng-container *ngIf="selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'up'">
                     <div class="col-xl-12 text-center">
                         <div class="arrow">
                             <img src="assets/images/arrow-up.png" (click)="selectFanDirection('Up')"
                                 class="img-fluid pointer" width="50" alt="">
                             <span class="arrow-text pointer"
-                                (click)="selectFanDirection('Up')">{{selectedTMCSEmergency.zone.upName}}</span>
+                                (click)="selectFanDirection('Up')">{{selectedTMCSEmergencyLatest.zone.upName}}</span>
                         </div>
                     </div>
                 </ng-container>
             </div>
-            <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
-                <div class="col-md-10 mx-auto text-center">
-                    <h4>If problem is solved then you can mark it as complete.</h4>
-                </div>
-            </div>
-            <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
-                <div class="col-xl-3 col-md-4 col-6 mx-auto text-center">
-                    <div class="d-grid">
-                        <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
+            <hr />
+            <ng-container *ngIf="selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'up'
+             || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'right'
+             || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'left'">
+                <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
+                    <div class="col-md-10 mx-auto text-center">
+                        <h4>If problem is solved then you can mark it as complete.</h4>
                     </div>
                 </div>
-            </div>
+                <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
+                    <div class="col-xl-3 col-md-4 col-6 mx-auto text-center">
+                        <div class="d-grid">
+                            <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
             <div class="row mt-2"
-                *ngIf="token?.role?.toLowerCase() == 'efc' && (!selectedTMCSEmergency.dmDecision || selectedTMCSEmergency.dmDecision == '')">
+                *ngIf="token?.role?.toLowerCase() == 'efc' && (!selectedTMCSEmergencyLatest.dmDecision || selectedTMCSEmergencyLatest.dmDecision == '')">
                 <div class="col-md-10 mx-auto text-center">
                     <h4>Please wait for DM's decision for fans direction.</h4>
                 </div>
             </div>
             <div class="row mt-2"
-                *ngIf="token?.role?.toLowerCase() == 'efc' && selectedTMCSEmergency.dmDecision && selectedTMCSEmergency.dmDecision != ''">
+                *ngIf="token?.role?.toLowerCase() == 'efc' && selectedTMCSEmergencyLatest.dmDecision && selectedTMCSEmergencyLatest.dmDecision != ''">
                 <div class="col-md-10 mx-auto text-center">
-                    <h4 *ngIf="selectedTMCSEmergency.dmDecision.toLowerCase() == 'up'">DM has decided to activate fans
+                    <h4 *ngIf="selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'up'">DM has decided to activate
+                        fans
                         in
                         <div class="arrow">
                             <img src="assets/images/arrow-up.png" class="img-fluid" width="50" alt="">
-                            <span class="arrow-text">{{selectedTMCSEmergency.zone.upName}}</span>
+                            <span class="arrow-text">{{selectedTMCSEmergencyLatest.zone.upName}}</span>
                         </div>
                         direction.
                     </h4>
-                    <h4 *ngIf="selectedTMCSEmergency.dmDecision.toLowerCase() == 'left'">DM has decided to activate fans
+                    <h4 *ngIf="selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'left'">DM has decided to
+                        activate fans
                         in
                         <div class="arrow">
                             <img src="assets/images/arrow-left.png" class="img-fluid" width="100" alt="">
-                            <span class="arrow-text">{{selectedTMCSEmergency.zone.leftName}}</span>
+                            <span class="arrow-text">{{selectedTMCSEmergencyLatest.zone.leftName}}</span>
                         </div>
                         direction.
                     </h4>
-                    <h4 *ngIf="selectedTMCSEmergency.dmDecision.toLowerCase() == 'right'">DM has decided to activate
+                    <h4 *ngIf="selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'right'">DM has decided to
+                        activate
                         fans in
                         <div class="arrow">
                             <img src="assets/images/arrow-right.png" class="img-fluid" width="100" alt="">
-                            <span class="arrow-text">{{selectedTMCSEmergency.zone.rightName}}</span>
+                            <span class="arrow-text">{{selectedTMCSEmergencyLatest.zone.rightName}}</span>
                         </div>
                         direction.
                     </h4>
@@ -239,18 +248,19 @@
             <div class="row mt-3">
                 <div class="col-md-10 mx-auto text-center text-danger">
                     <h4 class="fw-bold">Zone Layout</h4>
-                    <img class="img-fluid" src="{{selectedTMCSEmergency.zone.zoneLayout}}" alt="">
+                    <img class="img-fluid" src="{{selectedTMCSEmergencyLatest.zone.zoneLayout}}" alt="">
                 </div>
             </div>
+            <hr />
             <div class="row mt-3">
                 <div class="col-md-10 mx-auto text-center text-danger">
                     <h4 class="fw-bold">CCTV Layout</h4>
-                    <img class="img-fluid" src="{{selectedTMCSEmergency.zone.cctvLayout}}" alt="">
+                    <img class="img-fluid" src="{{selectedTMCSEmergencyLatest.zone.cctvLayout}}" alt="">
                 </div>
             </div>
         </div>
     </div>
-    <div class="row mt-5 mb-4" *ngIf="!selectedTMCSEmergency && !loading">
+    <div class="row mt-5 mb-4" *ngIf="!selectedTMCSEmergencyLatest">
         <div class="col-md-8 text-center mx-auto mt-5">
             <h4>Please select activated zone from dropdown to see the details.</h4>
         </div>
