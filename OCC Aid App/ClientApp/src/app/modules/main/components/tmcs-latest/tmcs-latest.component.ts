@@ -181,6 +181,26 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
     }
   }
 
+  markEfcAsComplete() {
+    if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
+      if (!this.selectedTMCSEmergencyLatest.efcMarkedCompleted) {
+        this.service.markEfcAsCompleteV1(this.selectedTMCSEmergencyLatest.id).subscribe(res => {
+          this.notify.markCompleteTMCSToHub(this.selectedTMCSEmergency?.id)
+          this.loadEmergencyZones();
+          this.dropdownValue = "";
+          this.toaster.success(`"${this.selectedTMCSEmergencyLatest?.zone.name}" has been marked as complete.`);
+          this.log.log("EFC", `${this.token?.email} has marked the zone "${this.selectedTMCSEmergencyLatest?.zone.name}" as completed.`);
+          this.selectedTMCSEmergencyLatest = undefined;
+        },
+          err => {
+            this.toaster.error("Unable to mark zone as complete.");
+          });
+      } else {
+        this.toaster.info(`"${this.selectedTMCSEmergencyLatest?.zone.name}" is already marked as completed.`);
+      }
+    }
+  }
+
   selectFanDirection(direction: string) {
     if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
       this.service.selectFanDirectionV1(this.selectedTMCSEmergencyLatest.id, direction).subscribe(res => {

@@ -215,6 +215,19 @@
             </div>
             <div class="row mt-2"
                 *ngIf="token?.role?.toLowerCase() == 'efc' && selectedTMCSEmergencyLatest.dmDecision && selectedTMCSEmergencyLatest.dmDecision != ''">
+                <div class="row mt-2">
+                    <div class="col-md-10 mx-auto text-center">
+                        <h4>If problem is solved then you can mark it as complete.</h4>
+                    </div>
+                </div>
+                <div class="row mt-2 mb-3">
+                    <div class="col-xl-3 col-md-4 col-6 mx-auto text-center">
+                        <div class="d-grid">
+                            <button class="btn btn-success" (click)="markEfcAsComplete()">Mark as complete</button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
                 <div class="col-md-10 mx-auto text-center">
                     <h4 *ngIf="selectedTMCSEmergencyLatest.dmDecision.toLowerCase() == 'up'">DM has decided to activate
                         fans
