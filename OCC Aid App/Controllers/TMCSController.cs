@@ -118,6 +118,15 @@ namespace OCC_Aid_App.Controllers
 				return Ok();
 			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> MarkEfcAsCompleteV1(int id)
+		{
+			if (await service.MarkEfcAsCompleteV1Async(id) > 0)
+				return Ok();
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
 		#endregion
 
 		[Authorize(Roles = "Admin")]

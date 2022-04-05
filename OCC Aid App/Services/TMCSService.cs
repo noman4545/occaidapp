@@ -582,6 +582,18 @@ namespace OCC_Aid_App.Services
 			}
 			return res;
 		}
+		
+		public async Task<int> MarkEfcAsCompleteV1Async(int id)
+		{
+			var tmcs = await _dbContext.V1_TMCSEmergencies.FindAsync(id);
+			int res = 0;
+			if (tmcs != null)
+			{
+				tmcs.EfcMarkedCompleted = true;
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
 		#endregion
 	}
 }
