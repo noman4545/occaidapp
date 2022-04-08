@@ -1,55 +1,103 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+  <div class="container">
+    <a [routerLink]="['/central']" class="navbar-brand">
+      <img src="assets/images/logo.png" width="100" alt="logo" class="d-inline-block align-middle mr-2">
+    </a>
+
+    <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+      class="navbar-toggler"><span class="navbar-toggler-icon"></span></button>
+
+    <div id="navbarSupportedContent" class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto text-center">
+        <li class="nav-item"><a [routerLink]="['/central']" title="About" class="nav-link" data-bs-toggle="modal"
+            data-bs-target="#about_modal">About</a></li>
+        <li class="nav-item"><a (click)="logout()" title="Logout" class="nav-link pointer">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <div class="container mt-5">
-    <div class="row">
-        <div class="col">
-            <h3>Please select your desired page.</h3>
-        </div>
+  <div class="row">
+    <div class="col">
+      <h3>Please select your desired page.</h3>
     </div>
-    <div class="row mt-4">
-        <div class="col mb-4">
-            <div class="card text-center p-2 mx-auto" (click)="goToPage('main/ios-codes')">
-                <div class="row">
-                    <div class="col-7 mx-auto">
-                        <img src="assets/images/ioscode-menu.png" class="img-fluid" alt="">
-                    </div>
-                </div>
-                <h3>IOS Codes</h3>
-                <h6>A vocal reference for controllers to identify the proper response for any IOS alarm for different
-                    O&M staff.</h6>
-            </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col mb-4">
+      <div class="card text-center p-2 mx-auto" (click)="goToPage('main/ios-codes')">
+        <div class="row">
+          <div class="col-7 mx-auto">
+            <img src="assets/images/ioscode-menu.png" class="img-fluid" alt="">
+          </div>
         </div>
-        <div class="col mb-4">
-            <div class="card text-center p-2 mx-auto" (click)="goToPage('main/acid-cctv')">
-                <div class="row">
-                    <div class="col-7 mx-auto">
-                        <img src="assets/images/acid-menu.png" class="img-fluid" alt="">
-                    </div>
-                </div>
-                <h3>ACID CCTV</h3>
-                <h6>Helps to integrate the ACID in ATS and ISM and identify the associated CCTV with each ACID.</h6>
-            </div>
-        </div>
-        <div class="col mb-4">
-            <div class="card text-center p-2 mx-auto" (click)="goToPage('main/tmcs-latest')">
-                <div class="row">
-                    <div class="col-7 mx-auto">
-                        <img src="assets/images/tmcs-menu.png" class="img-fluid" alt="">
-                    </div>
-                </div>
-                <h3>TMCS</h3>
-                <h6>Helps to decide which fire mode to activate in case of fire in tunnel or train on fire in a tunnel
-                    section.</h6>
-            </div>
-        </div>
-        <div class="col mb-4">
-            <div class="card text-center p-2 mx-auto" (click)="goToPage('main/sms')">
-                <div class="row">
-                    <div class="col-7 mx-auto">
-                        <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
-                    </div>
-                </div>
-                <h3>SMS</h3>
-                <h6>Standardize the SMS text to be sent and targeted audience for different operational events.</h6>
-            </div>
-        </div>
+        <h3>IOS Codes</h3>
+        <h6>
+          A vocal reference for controllers to identify the proper response for any IOS alarm for different
+          O&M staff.
+        </h6>
+      </div>
     </div>
+    <div class="col mb-4">
+      <div class="card text-center p-2 mx-auto" (click)="goToPage('main/acid-cctv')">
+        <div class="row">
+          <div class="col-7 mx-auto">
+            <img src="assets/images/acid-menu.png" class="img-fluid" alt="">
+          </div>
+        </div>
+        <h3>ACID CCTV</h3>
+        <h6>Helps to integrate the ACID in ATS and ISM and identify the associated CCTV with each ACID.</h6>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-center p-2 mx-auto" (click)="goToPage('main/tmcs-latest')">
+        <div class="row">
+          <div class="col-7 mx-auto">
+            <img src="assets/images/tmcs-menu.png" class="img-fluid" alt="">
+          </div>
+        </div>
+        <h3>TMCS</h3>
+        <h6>
+          Helps to decide which fire mode to activate in case of fire in tunnel or train on fire in a tunnel
+          section.
+        </h6>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-center p-2 mx-auto" (click)="goToPage('main/sms')">
+        <div class="row">
+          <div class="col-7 mx-auto">
+            <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
+          </div>
+        </div>
+        <h3>SMS</h3>
+        <h6>Standardize the SMS text to be sent and targeted audience for different operational events.</h6>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="about_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">OCC Aid App</h5>
+      </div>
+      <div class="modal-body">
+        OCC Aid App <br />
+        Ver. A02 <br />
+        <br />
+        <b>Developer:</b>&nbsp; Hussein Ahmed Eissa <br />
+        <b>System Administrator:</b>&nbsp; <a
+          href="mailto:hussein.eissa@flow-metro.com">hussein.eissa@flow-metro.com</a>
+        <br />
+        <b>Website:</b>&nbsp;<a href="https://www.flow-metro.com/" target="_blank">www.flow-metro.com</a> <br />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" #dismiss_confirm data-bs-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
 </div>

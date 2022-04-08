@@ -6,10 +6,15 @@
 }
 
 .card:hover {
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     color: #0d6efd;
 }
 
-.fs-1{
+.fs-1 {
     font-size: 5rem !important;
+}
+
+.navbar-collapse {
+    flex-grow: 0 !important;
+    font-weight: bold !important;
 }

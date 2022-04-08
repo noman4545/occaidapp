@@ -9,15 +9,20 @@ import { CentralService } from 'src/app/services/central.service';
   styleUrls: ['./central.component.css']
 })
 export class CentralComponent implements OnInit {
-  constructor(private service: CentralService, 
+  constructor(private service: CentralService,
     private toastr: ToastrService,
     private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  goToPage(page: string){
+  goToPage(page: string) {
     this.router.navigate([page]);
+  }
+
+  logout() {
+    localStorage.removeItem("ASPNetAuthToken");
+    this.router.navigate(['auth']);
   }
 
 }

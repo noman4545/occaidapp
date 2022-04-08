@@ -3,10 +3,14 @@
         <div class="col-12 col-sm-12 col-md-12 col-lg-2 col-xl-2 px-lg-2 px-0 bg-dark d-flex sticky-top">
             <div
                 class="d-flex flex-lg-column flex-row flex-grow-1 align-items-center align-items-lg-start px-3 pt-2 text-white">
-                <div class="d-flex align-items-center pb-lg-3 mb-lg-0 me-lg-auto text-white d-none d-sm-block">
-                    <span class="fs-5 fw-bold">User Controls</span>
-                    <hr class="w-100 text-white h-3px opacity-100 d-none d-lg-block">
+                <div [routerLink]="['/central']"
+                    class="d-flex align-items-center mb-lg-0 me-lg-auto text-white d-none d-sm-block pointer">
+                    <span class="fs-5 fw-bold">
+                        <img src="assets/images/logo1.png" width="100" alt="logo"
+                            class="d-inline-block align-middle mr-2">
+                    </span>
                 </div>
+                <hr class="w-100 text-white h-2px opacity-100 d-none d-lg-block">
                 <ul class="nav nav-pills flex-lg-column flex-row flex-nowrap flex-shrink-1 flex-lg-grow-0 flex-grow-1 mb-lg-auto mb-0 justify-content-center align-items-center align-items-lg-start"
                     id="menu">
                     <li class="nav-item">
