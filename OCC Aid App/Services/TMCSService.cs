@@ -438,6 +438,21 @@ namespace OCC_Aid_App.Services
 				|| w.ShaftName.Contains(search) || w.ZoneBlocks.Any(a => a.Block.Name.Contains(search))))
 				.Include(z => z.ZoneBlocks).ThenInclude(zb => zb.Block)
 				.OrderByDescending(o => o.CreatedDate)
+				.Select(p => new V1_Zone()
+				{
+					Id = p.Id,
+					Name = p.Name,
+					FanDirection = p.FanDirection,
+					UpName = p.UpName,
+					LeftName = p.LeftName,
+					RightName = p.RightName,
+					ShaftName = p.ShaftName,
+					CreatedDate = p.CreatedDate,
+					ModifyDate = p.ModifyDate,
+					IsDeleted = p.IsDeleted,
+					DeletedDate = p.DeletedDate,
+					ZoneBlocks = p.ZoneBlocks
+                })
 				.Skip((page - 1) * take).Take(take)
 				.ToListAsync();
 
@@ -450,6 +465,21 @@ namespace OCC_Aid_App.Services
 			var zonesV1 = await _dbContext.V1_Zones.Where(w => w.IsDeleted == Deleted)
 				.Include(z=>z.ZoneBlocks).ThenInclude(zb=>zb.Block)
 				.OrderByDescending(o => o.CreatedDate)
+				.Select(p => new V1_Zone()
+				{
+					Id = p.Id,
+					Name = p.Name,
+					FanDirection = p.FanDirection,
+					UpName = p.UpName,
+					LeftName = p.LeftName,
+					RightName = p.RightName,
+					ShaftName = p.ShaftName,
+					CreatedDate = p.CreatedDate,
+					ModifyDate = p.ModifyDate,
+					IsDeleted = p.IsDeleted,
+					DeletedDate = p.DeletedDate,
+					ZoneBlocks = p.ZoneBlocks
+				})
 				.Skip((page - 1) * take).Take(take)
 				.ToListAsync();
 			var totalZones = await _dbContext.V1_Zones.CountAsync(w => w.IsDeleted == Deleted);
