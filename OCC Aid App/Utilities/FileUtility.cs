@@ -45,4 +45,28 @@ namespace OCC_Aid_App.Utilities
 			}
 		}
 	}
+
+	public static class FileHelper
+    {
+		public static string ConvertToBase64(this Stream stream)
+		{
+			byte[] bytes;
+			using (var memoryStream = new MemoryStream())
+			{
+				stream.CopyTo(memoryStream);
+				bytes = memoryStream.ToArray();
+			}
+
+			return Convert.ToBase64String(bytes);
+		}
+
+		public static string GetFileExtension(string base64File)
+		{
+			string[] splittedBase64 = base64File.Split(',');
+			string[] temp = splittedBase64[0].Split(';');
+			return $".{temp[0].Split('/')[1]}";
+		}
+	}
+
+    
 }

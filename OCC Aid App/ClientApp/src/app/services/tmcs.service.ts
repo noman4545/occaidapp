@@ -77,6 +77,15 @@ export class TMCSService {
     return this.http.get<TMCSEmergencyLatest[]>(this.BaseURL + `GetEmergencyZonesV1`).pipe(take(1));
   }
 
+  getZonesImageV1(zoneFileName: string): Observable<Blob> {
+    return this.http.get(this.BaseURL + `GetZonesImageV1?zoneFileName=${zoneFileName}`, { responseType: 'blob' });
+  }
+
+  getCctvImageV1(cctvFileName: string): Observable<Blob> {
+    return this.http.get(this.BaseURL + `GetCCTVImageV1?cctvFileName=${cctvFileName}`, { responseType: 'blob' });
+  }
+
+
   getEmergencyZones(): Observable<TMCSEmergency[]> {
     return this.http.get<TMCSEmergency[]>(this.BaseURL + `GetEmergencyZones`).pipe(take(1));
   }

@@ -138,9 +138,33 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
 
   }
 
+  blob2Base64 = (blob:Blob):Promise<string> => {
+    return new Promise<string> ((resolve,reject)=> {
+         const reader = new FileReader();
+         reader.readAsDataURL(blob);
+         reader.onload = () => resolve(reader.result!.toString());
+         reader.onerror = error => reject(error);
+     })
+    }
+
   changeSelectedZone(event: any) {
+    this.loading = true;
     const zoneId = +event.target.value;
     this.selectedZone = this.zonesData?.find(x => x.id == zoneId);
+    const zoneFileName = this.selectedZone?.zoneLayout;
+    if(zoneFileName){
+      this.service.getZonesImageV1(zoneFileName).subscribe(res => {
+        this.blob2Base64(res).then(res=>this.selectedZone!.zoneLayout = res);
+        this.loading = false;
+      },
+        err => {
+          this.toaster.error("Unable to load zone image.");
+          this.loading = false;
+        });
+    }else{
+      this.loading = false;
+    }
+    
     this.activatedMessage = '';
     this.activatedMessage2 = '';
   }
@@ -159,6 +183,23 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
 
   getZoneDetails(index: number) {
     this.selectedTMCSEmergencyLatest = this.tmcsEmergencyLatest[index];
+    this.service.getZonesImageV1(this.selectedTMCSEmergencyLatest.zone.zoneLayout).subscribe(res => {
+      this.blob2Base64(res).then(res => this.selectedTMCSEmergencyLatest!.zone.zoneLayout = res);
+      this.loading = false;
+    },
+      err => {
+        this.toaster.error("Unable to load zone image.");
+        this.loading = false;
+      });
+
+      this.service.getCctvImageV1(this.selectedTMCSEmergencyLatest.zone.cctvLayout).subscribe(res => {
+        this.blob2Base64(res).then(res => this.selectedTMCSEmergencyLatest!.zone.cctvLayout = res);
+        this.loading = false;
+      },
+        err => {
+          this.toaster.error("Unable to load zone image.");
+          this.loading = false;
+        });
   }
 
   markAsComplete() {

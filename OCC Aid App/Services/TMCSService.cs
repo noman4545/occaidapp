@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using OCC_Aid_App.DatabaseContext;
 using OCC_Aid_App.Interfaces;
@@ -8,7 +9,9 @@ using OCC_Aid_App.Models.ViewModels;
 using OCC_Aid_App.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace OCC_Aid_App.Services
@@ -20,10 +23,12 @@ namespace OCC_Aid_App.Services
         private readonly IServiceScopeFactory<AppDatabaseContext> factory;
 		private readonly IConfiguration configuration;
 		private FileUtility utility;
-		private readonly ITypeMapper _typeMapper;
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly ITypeMapper _typeMapper;
 		#endregion
 
 		public TMCSService(
+			IWebHostEnvironment environment,
 			ITypeMapper typeMapper,
 			AppDatabaseContext dbContext,
 			IServiceScopeFactory<AppDatabaseContext> factory,
@@ -31,7 +36,8 @@ namespace OCC_Aid_App.Services
 			FileUtility utility)
 		{
             _dbContext = dbContext;
-			_typeMapper = typeMapper;
+            _hostEnvironment = environment;
+            _typeMapper = typeMapper;
 			this.factory = factory;
 			this.configuration = configuration;
 			this.utility = utility;
@@ -304,6 +310,10 @@ namespace OCC_Aid_App.Services
 			if (exists == null)
 			{
 				var zoneV1 = _typeMapper.Map<V1_ZoneRequest, V1_Zone>(zone);
+				var a = FileHelper.GetFileExtension(zone.ZoneLayout);
+
+				zoneV1.CctvLayout = zone.Name.Replace("/", "") + FileHelper.GetFileExtension(zone.CctvLayout);
+                zoneV1.ZoneLayout = zone.Name.Replace("/", "") + FileHelper.GetFileExtension(zone.ZoneLayout);
 				zoneV1.ZoneBlocks = new List<V1_ZoneBlock>();
                 foreach (var block in zone.Blocks)
                 {
@@ -492,7 +502,7 @@ namespace OCC_Aid_App.Services
 		public async Task<int> DeleteZoneV1(int id)
 		{
 			var zone = await _dbContext.V1_Zones
-				.Include(z=>z.ZoneBlocks).ThenInclude(zb=>zb.Block)
+				.Include(z=>z.ZoneBlocks)
 				.FirstOrDefaultAsync(f => f.Id == id);
 			int res = 0;
 			if (zone != null)
@@ -503,8 +513,6 @@ namespace OCC_Aid_App.Services
                 {
                     zoneBblock.IsDeleted = true;
                     zoneBblock.DeletedDate = DateTime.Now;
-					zoneBblock.Block.IsDeleted = true;
-					zoneBblock.Block.DeletedDate = DateTime.Now;
 				});
 				res = await _dbContext.SaveChangesAsync();
 			}
@@ -625,5 +633,7 @@ namespace OCC_Aid_App.Services
 			return res;
 		}
 		#endregion
+
+		
 	}
 }

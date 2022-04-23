@@ -26,7 +26,7 @@ namespace OCC_Aid_App.Utility
 					Verified = true
 				};
 
-				IdentityResult result = userManager.CreateAsync(user, "Admin$@occaidapp1").Result;
+				IdentityResult result = userManager.CreateAsync(user, "Password1.").Result;
 
 				if (result.Succeeded)
 				{

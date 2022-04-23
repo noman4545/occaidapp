@@ -15,6 +15,7 @@ using OCC_Aid_App.Services;
 using OCC_Aid_App.SignalR;
 using OCC_Aid_App.Utilities;
 using OCC_Aid_App.Utility;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,19 @@ builder.Services.AddSpaStaticFiles(configuration =>
 	configuration.RootPath = "ClientApp/dist";
 });
 
-builder.Services.AddDbContext<AppDatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
+#region Setting up Db Context
+builder.Services.AddDbContext<AppDatabaseContext>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("default"), providerOptions =>
+                    {
+                        providerOptions.EnableRetryOnFailure(
+                        maxRetryCount: 6,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorNumbersToAdd: null);
+                        providerOptions.CommandTimeout(120);
+                    }
+            ));
+#endregion
 
 builder.Services.AddIdentity<User, IdentityRole>()
 	.AddEntityFrameworkStores<AppDatabaseContext>()
@@ -81,7 +94,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();
@@ -92,16 +109,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-using(var scope = app.Services.CreateScope())
-{
-	var factory = app.Services.GetRequiredService<IServiceScopeFactory>();
-	using var scopeF = factory.CreateScope();
-	var context = scopeF.ServiceProvider.GetRequiredService<AppDatabaseContext>();
-	var userManager = scopeF.ServiceProvider.GetRequiredService<UserManager<User>>();
-	var roleManager = scopeF.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-	SeedAdmin.SeedAdminUser(userManager, roleManager, context);
-}
 
 app.UseEndpoints(endpoints =>
 {
@@ -126,6 +133,16 @@ using (var scope = app.Services.CreateScope())
 {
 	var dataContext = scope.ServiceProvider.GetRequiredService<AppDatabaseContext>();
 	dataContext.Database.Migrate();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+	var factory = app.Services.GetRequiredService<IServiceScopeFactory>();
+	using var scopeF = factory.CreateScope();
+	var context = scopeF.ServiceProvider.GetRequiredService<AppDatabaseContext>();
+	var userManager = scopeF.ServiceProvider.GetRequiredService<UserManager<User>>();
+	var roleManager = scopeF.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+	SeedAdmin.SeedAdminUser(userManager, roleManager, context);
 }
 
 app.Run();
