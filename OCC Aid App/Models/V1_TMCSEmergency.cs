@@ -13,6 +13,7 @@ namespace OCC_Aid_App.Models
 		public int? BlockId { get; set; }
 		public string DmDecision { get; set; }
         public bool EfcMarkedCompleted { get; set; }
+        public bool IsEfcRequireDmReview { get; set; }
         [Required]
 		public bool Completed { get; set; } = false;
 		[Required]

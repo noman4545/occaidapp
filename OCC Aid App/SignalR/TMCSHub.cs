@@ -19,5 +19,9 @@ namespace OCC_Aid_App.SignalR
 		{
 			await Clients.Others.SendAsync("MarkCompleteTMCSReceived", id);
 		}
+		public async Task ReviewEfcFromDmTMCS(object id)
+		{
+			await Clients.Others.SendAsync("ReviewEfcFromDmTMCSReceived", id);
+		}
 	}
 }

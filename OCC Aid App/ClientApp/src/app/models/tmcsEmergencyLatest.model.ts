@@ -8,6 +8,7 @@ export interface TMCSEmergencyLatest {
     blockId: number;
     completed: boolean;
     efcMarkedCompleted: boolean;
+    isEfcRequireDmReview: boolean;
     dmDecision: string;
     createdDate: Date;
     zone: ZoneResponseLatest;

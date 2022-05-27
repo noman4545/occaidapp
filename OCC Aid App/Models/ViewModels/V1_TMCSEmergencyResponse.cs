@@ -9,6 +9,7 @@ namespace OCC_Aid_App.Models
 		public int? BlockId { get; set; }
 		public string DmDecision { get; set; }
 		public bool EfcMarkedCompleted { get; set; }
+		public bool IsEfcRequireDmReview { get; set; }
 		public bool Completed { get; set; }
 		public DateTime CreatedDate { get; set; } = DateTime.Now;
 		public V1_ZoneResponse Zone { get; set; }

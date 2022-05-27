@@ -25,6 +25,7 @@ namespace OCC_Aid_App.Interfaces
 		Task<int> MarkAsComplete(int id);
 		Task<int> MarkAsCompleteV1Async(int id);
 		Task<int> MarkEfcAsCompleteV1Async(int id);
+		Task<int> EfcRequireDMReviewV1Async(int id);
 		Task<int> SelectFanDirection(int id, string direction);
 		Task<int> SelectFanDirectionV1Async(int id, string direction);
 		Task<GetTMCSResponse> GetPossibleExt1Blocks(int ext1);

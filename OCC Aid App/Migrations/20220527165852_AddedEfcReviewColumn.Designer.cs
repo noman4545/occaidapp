@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OCC_Aid_App.DatabaseContext;
 
@@ -11,9 +12,10 @@ using OCC_Aid_App.DatabaseContext;
 namespace OCC_Aid_App.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220527165852_AddedEfcReviewColumn")]
+    partial class AddedEfcReviewColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

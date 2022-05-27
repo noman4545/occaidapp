@@ -79,4 +79,10 @@ export class NotifyTMCSService {
     if(this.hubConnection.state == signalR.HubConnectionState.Connected)
         this.hubConnection.invoke('MarkCompleteTMCS', id);
   }
+
+  reviewEfcFromDmToHub(id: any) {
+    if(this.hubConnection == undefined) return; 
+    if(this.hubConnection.state == signalR.HubConnectionState.Connected)
+        this.hubConnection.invoke('ReviewEfcFromDmTMCS', id);
+  }
 }

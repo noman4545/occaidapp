@@ -228,6 +228,22 @@ namespace OCC_Aid_App.Controllers
 
 		[Authorize]
 		[HttpGet]
+		public async Task<IActionResult> EfcRequireDMReviewV1(int id)
+		{
+			try
+			{
+				if (await service.EfcRequireDMReviewV1Async(id) > 0)
+					return Ok();
+				return StatusCode(StatusCodes.Status500InternalServerError);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
+		[Authorize]
+		[HttpGet]
 		public IActionResult GetZonesImageV1(string zoneFileName)
 		{
             try

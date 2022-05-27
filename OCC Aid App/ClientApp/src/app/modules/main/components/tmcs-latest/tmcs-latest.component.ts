@@ -44,6 +44,10 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
   zonesData: ZoneResponseLatest[] | undefined;
   selectedZone: ZoneResponseLatest | undefined;
 
+  selectingFanDir: boolean = false;
+  fanDirection: string = '';
+  isUpdateDmDecision: boolean = false;
+
   subscriptions: Subscription[] = [];
   constructor(private router: Router,
     private fb: FormBuilder,
@@ -222,6 +226,12 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
     }
   }
 
+  dmChangeFanDirection() {
+    if (!this.isUpdateDmDecision) {
+      this.isUpdateDmDecision = true;
+    }
+  }
+
   markEfcAsComplete() {
     if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
       if (!this.selectedTMCSEmergencyLatest.efcMarkedCompleted) {
@@ -242,8 +252,27 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
     }
   }
 
+  reviewEfcFromDm() {
+    if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
+      if (!this.selectedTMCSEmergencyLatest.isEfcRequireDmReview) {
+        this.service.reviewEfcFromDmV1(this.selectedTMCSEmergencyLatest.id).subscribe(res => {
+          this.notify.reviewEfcFromDmToHub(this.selectedTMCSEmergency?.id)
+          this.loadEmergencyZones();
+          this.dropdownValue = "";
+          this.toaster.success(`"${this.selectedTMCSEmergencyLatest?.zone.name}" has been assigned to DM for review.`);
+          this.log.log("EFC", `${this.token?.email} has assigned the zone "${this.selectedTMCSEmergencyLatest?.zone.name}" for review.`);
+          this.selectedTMCSEmergencyLatest = undefined;
+        },
+          err => {
+            this.toaster.error("Unable to mark zone for review.");
+          });
+      }
+    }
+  }
+
   selectFanDirection(direction: string) {
     if (this.selectedTMCSEmergencyLatest && this.selectedTMCSEmergencyLatest.id) {
+      this.selectingFanDir = true;
       this.service.selectFanDirectionV1(this.selectedTMCSEmergencyLatest.id, direction).subscribe(res => {
         if (this.selectedTMCSEmergencyLatest) {
           this.selectedTMCSEmergencyLatest.dmDecision = direction;
@@ -258,8 +287,11 @@ export class TMCSLatestComponent implements OnInit, OnDestroy {
             this.log.log("TMCS", `${this.token?.email} has selected ${this.selectedTMCSEmergencyLatest.zone.upName} fan direction for zone "${this.selectedTMCSEmergency?.zone.name}".`);
         }
         this.toaster.success("EFC has been notified about your decision.");
+        this.selectingFanDir = false;
+        window.location.reload();
       },
         err => {
+          this.selectingFanDir = false;
           this.toaster.error("Unable to notify EFC.");
         });
     }

@@ -155,53 +155,60 @@
                 </div>
             </div>
             <div class="row"
-                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergencyLatest.dmDecision || selectedTMCSEmergencyLatest.dmDecision == '')">
+                *ngIf="token?.role?.toLowerCase() == 'dm' && (!selectedTMCSEmergencyLatest.dmDecision || selectedTMCSEmergencyLatest.dmDecision == '' || isUpdateDmDecision)">
                 <ng-container *ngIf="selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'left/right'">
                     <div class="col-6 mx-auto">
                         <div class="row">
-                            <div class="col-md-6 mt-2 text-center">
+                            <div class="col-md-6 mt-2 text-center" (click)="fanDirection = 'Left'" data-bs-toggle="modal" data-bs-target="#select_fan_dir_modal">
                                 <div class="arrow">
-                                    <img src="assets/images/arrow-left.png" (click)="selectFanDirection('Left')"
+                                    <img src="assets/images/arrow-left.png"
                                         class="img-fluid pointer" width="100" alt="">
                                     <span class="arrow-text pointer"
-                                        (click)="selectFanDirection('Left')">{{selectedTMCSEmergencyLatest.zone.leftName}}</span>
+                                        >{{selectedTMCSEmergencyLatest.zone.leftName}}</span>
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-2 text-center">
+                            <div class="col-md-6 mt-2 text-center" (click)="fanDirection = 'Right'" data-bs-toggle="modal" data-bs-target="#select_fan_dir_modal">
                                 <div class="arrow">
-                                    <img src="assets/images/arrow-right.png" (click)="selectFanDirection('Right')"
+                                    <img src="assets/images/arrow-right.png" 
                                         class="img-fluid pointer" width="100" alt="">
                                     <span class="arrow-text pointer"
-                                        (click)="selectFanDirection('Right')">{{selectedTMCSEmergencyLatest.zone.rightName}}</span>
+                                        >{{selectedTMCSEmergencyLatest.zone.rightName}}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'up'">
-                    <div class="col-xl-12 text-center">
+                    <div class="col-xl-12 text-center" (click)="fanDirection = 'Up'" data-bs-toggle="modal" data-bs-target="#select_fan_dir_modal">
                         <div class="arrow">
-                            <img src="assets/images/arrow-up.png" (click)="selectFanDirection('Up')"
+                            <img src="assets/images/arrow-up.png"
                                 class="img-fluid pointer" width="50" alt="">
                             <span class="arrow-text pointer"
-                                (click)="selectFanDirection('Up')">{{selectedTMCSEmergencyLatest.zone.upName}}</span>
+                                >{{selectedTMCSEmergencyLatest.zone.upName}}</span>
                         </div>
                     </div>
                 </ng-container>
             </div>
             <hr />
-            <ng-container *ngIf="selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'up'
+            <ng-container *ngIf="token?.role?.toLowerCase() == 'dm' && 
+             (selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'up'
              || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'right'
-             || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'left'">
-                <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
+             || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'left')">
+                <div class="row mt-2">
                     <div class="col-md-10 mx-auto text-center">
-                        <h4>If problem is solved then you can mark it as complete.</h4>
+                        <h4 class="text-info" *ngIf="!selectedTMCSEmergencyLatest?.isEfcRequireDmReview">The EFC has {{selectedTMCSEmergencyLatest.efcMarkedCompleted ? '' : 'not yet'}} marked "{{selectedTMCSEmergencyLatest?.zone?.name}}" as complete.</h4>
+                        <h4 class="text-info" *ngIf="selectedTMCSEmergencyLatest?.isEfcRequireDmReview">The EFC has assigned "{{selectedTMCSEmergencyLatest?.zone?.name}}" for review.</h4>
                     </div>
                 </div>
-                <div class="row mt-2" *ngIf="token?.role?.toLowerCase() == 'dm'">
-                    <div class="col-xl-3 col-md-4 col-6 mx-auto text-center">
+                <div class="row mt-2 justify-content-center" *ngIf="!isUpdateDmDecision">
+                    <div class="col-md-3 text-center">
                         <div class="d-grid">
                             <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center" *ngIf="selectedTMCSEmergencyLatest?.isEfcRequireDmReview">
+                        <div class="d-grid">
+                            <button class="btn btn-primary" (click)="dmChangeFanDirection()">Change Direction</button>
                         </div>
                     </div>
                 </div>
@@ -217,13 +224,19 @@
                 *ngIf="token?.role?.toLowerCase() == 'efc' && selectedTMCSEmergencyLatest.dmDecision && selectedTMCSEmergencyLatest.dmDecision != ''">
                 <div class="row mt-2">
                     <div class="col-md-10 mx-auto text-center">
-                        <h4>If problem is solved then you can mark it as complete.</h4>
+                        <h4 *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview == false">If problem is solved then you can mark it as complete.</h4>
+                        <h4 *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview == true" class="text-primary">Please wait, you assigned it to DM for review.</h4>
                     </div>
                 </div>
-                <div class="row mt-2 mb-3">
-                    <div class="col-xl-3 col-md-4 col-6 mx-auto text-center">
+                <div class="row mt-2 mb-3 justify-content-center">
+                    <div class="col-md-3 text-center" *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview != true">
                         <div class="d-grid">
                             <button class="btn btn-success" (click)="markEfcAsComplete()">Mark as complete</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center" *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview != true && selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'left/right'">
+                        <div class="d-grid">
+                            <button class="btn btn-primary" (click)="reviewEfcFromDm()">Review from DM</button>
                         </div>
                     </div>
                 </div>
@@ -276,6 +289,31 @@
     <div class="row mt-5 mb-4" *ngIf="!selectedTMCSEmergencyLatest">
         <div class="col-md-8 text-center mx-auto mt-5">
             <h4>Please select activated zone from dropdown to see the details.</h4>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="select_fan_dir_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to select Fan Direction <b>{{fanDirection}}</b>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" #dismiss_confirm data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger" [disabled]="selectingFanDir"
+                    (click)="selectFanDirection(fanDirection);dismiss_confirm.click();">
+                    <span class="spinner-border spinner-border-sm" *ngIf="selectingFanDir" role="status"
+                        aria-hidden="true"></span>
+                    Confirm
+                </button>
+            </div>
         </div>
     </div>
 </div>

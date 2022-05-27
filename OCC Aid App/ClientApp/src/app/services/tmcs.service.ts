@@ -102,6 +102,10 @@ export class TMCSService {
     return this.http.get(this.BaseURL + `MarkEfcAsCompleteV1?id=${id}`).pipe(take(1));
   }
 
+  reviewEfcFromDmV1(id: number) {
+    return this.http.get(this.BaseURL + `EfcRequireDMReviewV1?id=${id}`).pipe(take(1));
+  }
+
   selectFanDirection(id: number, direction: string) {
     return this.http.get(this.BaseURL + `SelectFanDirection?id=${id}&direction=${direction}`).pipe(take(1));
   }

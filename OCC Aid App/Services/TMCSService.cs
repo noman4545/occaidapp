@@ -604,6 +604,7 @@ namespace OCC_Aid_App.Services
 			if (tmcs != null)
 			{
 				tmcs.DmDecision = direction;
+				tmcs.IsEfcRequireDmReview = false;
 				res = await _dbContext.SaveChangesAsync();
 			}
 			return res;
@@ -632,8 +633,20 @@ namespace OCC_Aid_App.Services
 			}
 			return res;
 		}
+
+		public async Task<int> EfcRequireDMReviewV1Async(int id)
+		{
+			var tmcs = await _dbContext.V1_TMCSEmergencies.FindAsync(id);
+			int res = 0;
+			if (tmcs != null)
+			{
+				tmcs.IsEfcRequireDmReview = true;
+				res = await _dbContext.SaveChangesAsync();
+			}
+			return res;
+		}
 		#endregion
 
-		
+
 	}
 }
