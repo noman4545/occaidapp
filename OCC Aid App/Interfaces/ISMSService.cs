@@ -15,6 +15,9 @@ namespace OCC_Aid_App.Interfaces
 		Task<int> RecoverSMS(int id);
 		Task<int> SaveArchieveSMS(ArchievedSMS sms);
 		Task<int> MarkArchieveSMSComplete(int id);
+		Task<int> MarkArchieveSMSForDMReviewAsync(ArchievedSMS archieveSMS);
+		Task<int> DMReviewArchieveSMSAsync(ArchievedSMS archieveSMS);
 		Task<List<ArchievedSMS>> GetArchieveSMS();
+		Task<List<ArchievedSMS>> GetReviewAbleArchievedSMSAsync();
 	}
 }

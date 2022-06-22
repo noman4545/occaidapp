@@ -43,11 +43,23 @@ export class SMSService {
     return this.http.get<SMS[]>(this.BaseURL + `GetArchieveSMS`).pipe(take(1));
   }
 
+  getReviewAbleArchievedSMS(): Observable<SMS[]>{
+    return this.http.get<SMS[]>(this.BaseURL + `GetReviewAbleArchievedSMS`).pipe(take(1));
+  }
+
   saveArchievedSMS(sms: SMS) {
     return this.http.post(this.BaseURL + `SaveArchieveSMS`, sms).pipe(take(1));
   }
 
   markCompleteArchieveSMS(id: number){
     return this.http.get(this.BaseURL + `MarkArchieveSMSComplete?id=${id}`).pipe(take(1));
+  }
+
+  markArchieveSMSForDMReview(sms: SMS){
+    return this.http.put(this.BaseURL + `MarkArchieveSMSForDMReview`, sms).pipe(take(1));
+  }
+
+  dMReviewArchieveSMS(sms: SMS){
+    return this.http.put(this.BaseURL + `DMReviewArchieveSMS`, sms).pipe(take(1));
   }
 }

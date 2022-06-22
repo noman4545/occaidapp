@@ -20,6 +20,8 @@ namespace OCC_Aid_App.Models
 		public string TimeToReturnToTimetable { get; set; }
 		[Required]
 		public bool Completed { get; set; } = false;
+		public bool IsRequiredDmReview { get; set; } = false;
+		public bool IsDmReviewed { get; set; } = false;
 		public DateTime CreatedDate { get; set; } = DateTime.Now;
 		public DateTime? ModifyDate { get; set; }
 	}

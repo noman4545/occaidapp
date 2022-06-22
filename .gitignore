@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/OCC Aid App/wwwroot/Images/Zone_CctvLayout
+/OCC Aid App/wwwroot/Images/Zone_ZoneLayout

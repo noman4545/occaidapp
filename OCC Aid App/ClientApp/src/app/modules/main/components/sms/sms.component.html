@@ -4,16 +4,29 @@
             <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-md-4 mx-auto">
-            <select class="form-select" [(ngModel)]="dropdownValue" #smsList (change)="getSMSDetails($any($event.target).value)">
-                <option value="">Select SMS To Send</option>
-                <ng-container *ngFor="let sms of smss; let i = index;">
-                    <option value="{{i}}">{{sms.typeOfFailure}}</option>
-                </ng-container>
-            </select>
+    <div class="row mt-2 justify-content-center">
+        <div class="col-md-3 text-center">
+            <div class="d-grid">
+                <select class="form-select" [(ngModel)]="dropdownValue" #smsList (change)="getSMSDetails($any($event.target).value)">
+                    <option value="">Select SMS To Send</option>
+                    <ng-container *ngFor="let sms of smss; let i = index;">
+                        <option value="{{i}}">{{sms.typeOfFailure}}</option>
+                    </ng-container>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 text-center">
+            <div class="d-grid">
+                <select class="form-select" [(ngModel)]="reviewableDropdownValue" #reviewSmsList (change)="getReviewSMSDetails($any($event.target).value)">
+                    <option value="">Select SMS To Review</option>
+                    <ng-container *ngFor="let sms of reviewableArchievedSmss; let i = index;">
+                        <option value="{{i}}">{{sms.typeOfFailure}}</option>
+                    </ng-container>
+                </select>
+            </div>
         </div>
     </div>
+
     <div class="row mt-4 mb-4" *ngIf="selectedSMS">
         <div class="col-md-10 mb-4 mx-auto card shadow-lg p-4">
             <div class="row">
@@ -26,11 +39,11 @@
             <div class="row">
                 <div class="col-md-6 align-self-end h-auto text-center mt-3">
                     <h4 class="fw-bold">System Behaviour</h4>
-                    <textarea [(ngModel)]="selectedSMS.systemBehaviour" class="form-control no-resize" placeholder="Type here..."></textarea>
+                    <textarea [disabled]="selectedSMS.isRequiredDmReview" [(ngModel)]="selectedSMS.systemBehaviour" class="form-control no-resize" placeholder="Type here..."></textarea>
                 </div>
                 <div class="col-md-6 align-self-end h-auto text-center mt-3">
                     <h4 class="fw-bold">How To Manage Fault<br />(Work Instruction)</h4>
-                    <textarea [(ngModel)]="selectedSMS.workInstruction" class="form-control no-resize" placeholder="Type here..."></textarea>
+                    <textarea [disabled]="selectedSMS.isRequiredDmReview" [(ngModel)]="selectedSMS.workInstruction" class="form-control no-resize" placeholder="Type here..."></textarea>
                 </div>
             </div>
             <div class="row">
@@ -40,12 +53,12 @@
                 </div>
                 <div class="col-md-6 align-self-end h-auto text-center mt-3">
                     <h4 class="fw-bold">Delay/Time To Return To Timetable</h4>
-                    <textarea [(ngModel)]="selectedSMS.timeToReturnToTimetable" class="form-control no-resize" placeholder="Type here..."></textarea>
+                    <textarea [disabled]="selectedSMS.isRequiredDmReview" [(ngModel)]="selectedSMS.timeToReturnToTimetable" class="form-control no-resize" placeholder="Type here..."></textarea>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-3 col-xl-2 mx-auto text-center">
-                    <button class="btn btn-primary w-100" (click)="sendSMS()">Send SMS</button>
+                    <button class="btn btn-primary w-100" (click)="sendOrReviewSMS()">{{selectedSMS.isRequiredDmReview ? 'Approve SMS' : 'Send SMS'}}</button>
                 </div>
             </div>
         </div>
@@ -57,7 +70,7 @@
     </div>
 </div>
 
-<div class="container" *ngIf="token?.role?.toLowerCase() != 'dm' && token?.role?.toLowerCase() != 'dm'">
+<div class="container" *ngIf="token?.role?.toLowerCase() != 'dm'">
     <div class="row">
         <div class="col-4 col-lg-2 text-center mx-auto">
             <img src="assets/images/sms-menu.png" class="img-fluid" alt="">
@@ -100,17 +113,36 @@
             <div class="row">
                 <div class="col-md-6 align-self-end h-auto text-center mt-3">
                     <h4 class="fw-bold">Message To Be Sent Out<br />(Station Controller) SMS</h4>
-                    <textarea [(ngModel)]="receivedSMS.message" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
+                    <textarea [(ngModel)]="receivedSMS.message" [disabled]="token?.role?.toLowerCase() != 'sc'" class="form-control no-resize" placeholder="Type here..."></textarea>
                 </div>
                 <div class="col-md-6 align-self-end h-auto text-center mt-3">
                     <h4 class="fw-bold">Delay/Time To Return To Timetable</h4>
                     <textarea [(ngModel)]="receivedSMS.timeToReturnToTimetable" readonly class="form-control no-resize" placeholder="Type here..."></textarea>
                 </div>
             </div>
-            <div class="row mt-3" *ngIf="token?.role?.toLowerCase() == 'sc'">
-                <div class="col-md-4 col-xl-3 mx-auto text-center">
-                    <button class="btn btn-primary w-100" (click)="markAsComplete()">Mark As Complete</button>
-                </div>
+            <div class="row mt-2 justify-content-center" *ngIf="token?.role?.toLowerCase() == 'sc'">
+                <ng-container *ngIf="receivedSMS.isRequiredDmReview">
+                    <div class="col-md-10 mx-auto text-center text-danger">
+                        <h4 class="fw-bold">Please, wait for DM review.</h4>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="receivedSMS.isDmReviewed">
+                    <div class="col-md-10 mx-auto text-center text-info">
+                        <h4 class="fw-bold">DM has reviewed this sms.</h4>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!receivedSMS.isRequiredDmReview">
+                    <div class="col-md-3 text-center" *ngIf="receivedSMS.isDmReviewed">
+                        <div class="d-grid">
+                            <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="d-grid">
+                            <button class="btn btn-primary w-100" (click)="reviewFromDm()">Review from DM</button>
+                        </div>
+                    </div>
+                </ng-container>
             </div>
         </div>
     </div>

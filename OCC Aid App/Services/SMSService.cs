@@ -115,11 +115,40 @@ namespace OCC_Aid_App.Services
 			return await context.SaveChangesAsync();
 		}
 
+		public async Task<int> MarkArchieveSMSForDMReviewAsync(ArchievedSMS archieveSMS)
+		{
+			using var scope = factory.CreateScope();
+			var context = scope.GetRequiredService();
+			archieveSMS.Message = archieveSMS.Message;
+			archieveSMS.IsRequiredDmReview = true;
+			archieveSMS.IsDmReviewed = false;
+			context.ArchievedSMSs.Update(archieveSMS);
+			return await context.SaveChangesAsync();
+		}
+
+		public async Task<int> DMReviewArchieveSMSAsync(ArchievedSMS archieveSMS)
+		{
+			using var scope = factory.CreateScope();
+			var context = scope.GetRequiredService();
+			archieveSMS.Message = archieveSMS.Message;
+			archieveSMS.IsDmReviewed = true;
+			archieveSMS.IsRequiredDmReview = false;
+			context.ArchievedSMSs.Update(archieveSMS);
+			return await context.SaveChangesAsync();
+		}
+
 		public async Task<List<ArchievedSMS>> GetArchieveSMS()
 		{
 			using var scope = factory.CreateScope();
 			var context = scope.GetRequiredService();
 			return await context.ArchievedSMSs.Where(w => w.Completed == false).ToListAsync();
+		}
+
+		public async Task<List<ArchievedSMS>> GetReviewAbleArchievedSMSAsync()
+		{
+			using var scope = factory.CreateScope();
+			var context = scope.GetRequiredService();
+			return await context.ArchievedSMSs.Where(w => w.IsRequiredDmReview && !w.IsDmReviewed && !w.Completed).ToListAsync();
 		}
 	}
 }

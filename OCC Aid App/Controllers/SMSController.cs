@@ -85,6 +85,13 @@ namespace OCC_Aid_App.Controllers
 		}
 
 		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetReviewAbleArchievedSMS()
+		{
+			return Ok(await service.GetReviewAbleArchievedSMSAsync());
+		}
+
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> SaveArchieveSMS(ArchievedSMS sms)
 		{
@@ -102,6 +109,26 @@ namespace OCC_Aid_App.Controllers
 		public async Task<IActionResult> MarkArchieveSMSComplete(int id)
 		{
 			if (await service.MarkArchieveSMSComplete(id) > 0)
+				return Ok();
+
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize]
+		[HttpPut]
+		public async Task<IActionResult> MarkArchieveSMSForDMReview(ArchievedSMS archieveSMS)
+		{
+			if (await service.MarkArchieveSMSForDMReviewAsync(archieveSMS) > 0)
+				return Ok();
+
+			return StatusCode(StatusCodes.Status500InternalServerError);
+		}
+
+		[Authorize]
+		[HttpPut]
+		public async Task<IActionResult> DMReviewArchieveSMS(ArchievedSMS archieveSMS)
+		{
+			if (await service.DMReviewArchieveSMSAsync(archieveSMS) > 0)
 				return Ok();
 
 			return StatusCode(StatusCodes.Status500InternalServerError);

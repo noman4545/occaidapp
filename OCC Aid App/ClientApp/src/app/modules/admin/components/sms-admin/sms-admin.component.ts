@@ -61,7 +61,10 @@ export class SMSAdminComponent implements OnInit {
       'systemBehaviour': ['', Validators.required],
       'workInstruction': ['', Validators.required],
       'message': ['', Validators.required],
-      'timeToReturnToTimetable': ['', Validators.required]
+      'timeToReturnToTimetable': ['', Validators.required],
+      'completed': [false],
+      'isRequiredDmReview': [false],
+      'isDmReviewed': [false]
     };
 
     this.form = this.fb.group(tempForm);
@@ -135,7 +138,10 @@ export class SMSAdminComponent implements OnInit {
       'systemBehaviour': [sms.systemBehaviour, Validators.required],
       'workInstruction': [sms.workInstruction, Validators.required],
       'message': [sms.message, Validators.required],
-      'timeToReturnToTimetable': [sms.timeToReturnToTimetable, Validators.required]
+      'timeToReturnToTimetable': [sms.timeToReturnToTimetable, Validators.required],
+      'completed': [sms.completed],
+      'isRequiredDmReview': [sms.isRequiredDmReview],
+      'isDmReviewed': [sms.isDmReviewed]
     };
 
     this.form = this.fb.group(tempForm);

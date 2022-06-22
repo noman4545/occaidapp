@@ -23,6 +23,9 @@ export class SMSComponent implements OnInit, OnDestroy {
   selectedSMS: SMS | undefined;
   receivedSMS: SMS | undefined;
 
+  reviewableArchievedSmss: SMS[] = [];
+  reviewableDropdownValue: string = "";
+
   subscriptions: Subscription[] = [];
   constructor(private router: Router,
     private service: SMSService,
@@ -51,6 +54,7 @@ export class SMSComponent implements OnInit, OnDestroy {
       this.loadArchievedSMSs();
     }
     else{
+      this.loadReviewableArchievedSMSs();
       this.loadSMSs();
     }
   }
@@ -78,19 +82,39 @@ export class SMSComponent implements OnInit, OnDestroy {
   getSMSDetails(index: number){
     this.selectedSMS = this.smss[index];
     this.receivedSMS = this.smss[index];
+
+    console.log(this.smss[index]);
   }
 
-  sendSMS(){
-    if(!this.selectedSMS) return;
-    this.service.saveArchievedSMS(this.selectedSMS).subscribe(res => {
-      if(!this.selectedSMS) return;
-      this.notify.sendSMSToHub(this.selectedSMS);
-      this.toastr.success("SMS has been sent successfully.");
-      this.logger.log("SMS", `${this.token?.email} has sent a SMS`);
-    },
-    err => {
-      this.toastr.error("Unable to Send SMS.", "Error!");
-    });
+  getReviewSMSDetails(index: number){
+    this.selectedSMS = this.reviewableArchievedSmss[index];
+    this.receivedSMS = this.reviewableArchievedSmss[index];
+  }
+
+  sendOrReviewSMS() {
+    if (!this.selectedSMS) return;
+    if (this.selectedSMS.isRequiredDmReview) {
+      this.service.dMReviewArchieveSMS(this.selectedSMS).subscribe(res => {
+        if(!this.selectedSMS) return;
+        this.reviewableArchievedSmss = this.reviewableArchievedSmss.filter(x=>x.id !== this.selectedSMS?.id);
+        this.notify.sendSMSToHub(this.selectedSMS);
+        this.toastr.success("Dm has approved SMS successfully.");
+        this.logger.log("SMS", `${this.token?.email} has review a SMS`);
+      },
+      err => {
+        this.toastr.error("Unable to review SMS.", "Error!");
+      });
+    } else {
+      this.service.saveArchievedSMS(this.selectedSMS).subscribe(res => {
+        if (!this.selectedSMS) return;
+        this.notify.sendSMSToHub(this.selectedSMS);
+        this.toastr.success("SMS has been sent successfully.");
+        this.logger.log("SMS", `${this.token?.email} has sent a SMS`);
+      },
+        err => {
+          this.toastr.error("Unable to Send SMS.", "Error!");
+        });
+    }
   }
 
   loadArchievedSMSs() {
@@ -101,6 +125,18 @@ export class SMSComponent implements OnInit, OnDestroy {
     },
     err => {
       this.toastr.error("Unable to load SMS list.", "Error!");
+      this.loading = false;
+    });
+  }
+
+  loadReviewableArchievedSMSs() {
+    this.loading = true;
+    this.service.getReviewAbleArchievedSMS().subscribe(res => {
+      this.reviewableArchievedSmss = res;
+      this.loading = false;
+    },
+    err => {
+      this.toastr.error("Unable to load review able SMS list.", "Error!");
       this.loading = false;
     });
   }
@@ -116,6 +152,20 @@ export class SMSComponent implements OnInit, OnDestroy {
     err => {
       this.toastr.error("Unable to mark SMS as completed.", "Error!");
     });
+  }
+
+  reviewFromDm() {
+    if (!this.receivedSMS || !this.receivedSMS.id) return;
+    if (this.token?.role?.toLowerCase() == 'sc') {
+      this.service.markArchieveSMSForDMReview(this.receivedSMS).subscribe(res => {
+        this.toastr.success("SMS assigned to DM for review.", "Success!");
+        this.logger.log("SMS", `${this.token?.email} has assigned to DM for review.`);
+        this.receivedSMS = undefined;
+      },
+        err => {
+          this.toastr.error("Unable to assign SMS to DM for review.", "Error!");
+        });
+    }
   }
 
   close(){

@@ -5,4 +5,7 @@ export interface SMS {
     workInstruction: string;
     message: string;
     timeToReturnToTimetable: string;
+    completed: boolean;
+    isRequiredDmReview: boolean;
+    isDmReviewed: boolean;
 }
