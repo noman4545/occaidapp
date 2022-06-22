@@ -100,6 +100,7 @@ export class SMSComponent implements OnInit, OnDestroy {
         this.notify.sendSMSToHub(this.selectedSMS);
         this.toastr.success("Dm has approved SMS successfully.");
         this.logger.log("SMS", `${this.token?.email} has review a SMS`);
+        this.selectedSMS = undefined;
       },
       err => {
         this.toastr.error("Unable to review SMS.", "Error!");
@@ -110,6 +111,7 @@ export class SMSComponent implements OnInit, OnDestroy {
         this.notify.sendSMSToHub(this.selectedSMS);
         this.toastr.success("SMS has been sent successfully.");
         this.logger.log("SMS", `${this.token?.email} has sent a SMS`);
+        this.selectedSMS = undefined;
       },
         err => {
           this.toastr.error("Unable to Send SMS.", "Error!");
@@ -160,7 +162,7 @@ export class SMSComponent implements OnInit, OnDestroy {
       this.service.markArchieveSMSForDMReview(this.receivedSMS).subscribe(res => {
         this.toastr.success("SMS assigned to DM for review.", "Success!");
         this.logger.log("SMS", `${this.token?.email} has assigned to DM for review.`);
-        this.receivedSMS = undefined;
+        window.location.reload();
       },
         err => {
           this.toastr.error("Unable to assign SMS to DM for review.", "Error!");
