@@ -31,7 +31,7 @@ export class SMSComponent implements OnInit, OnDestroy {
     private service: SMSService,
     private notify: NotificationService,
     private toastr: ToastrService,
-    private logger: LoggingService) { 
+    private logger: LoggingService) {
       if(localStorage.getItem('ASPNetAuthToken')){
         this.token = JSON.parse(localStorage.getItem('ASPNetAuthToken') as string) as Token;
       }

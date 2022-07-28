@@ -169,7 +169,7 @@
                             </div>
                             <div class="col-md-6 mt-2 text-center" (click)="fanDirection = 'Right'" data-bs-toggle="modal" data-bs-target="#select_fan_dir_modal">
                                 <div class="arrow">
-                                    <img src="assets/images/arrow-right.png" 
+                                    <img src="assets/images/arrow-right.png"
                                         class="img-fluid pointer" width="100" alt="">
                                     <span class="arrow-text pointer"
                                         >{{selectedTMCSEmergencyLatest.zone.rightName}}</span>
@@ -190,7 +190,7 @@
                 </ng-container>
             </div>
             <hr />
-            <ng-container *ngIf="token?.role?.toLowerCase() == 'dm' && 
+            <ng-container *ngIf="token?.role?.toLowerCase() == 'dm' &&
              (selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'up'
              || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'right'
              || selectedTMCSEmergencyLatest.dmDecision?.toLowerCase() == 'left')">
@@ -234,11 +234,11 @@
                             <button class="btn btn-success" (click)="markEfcAsComplete()">Mark as complete</button>
                         </div>
                     </div>
-                    <div class="col-md-3 text-center" *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview != true && selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'left/right'">
+                    <!-- <div class="col-md-3 text-center" *ngIf="this.selectedTMCSEmergencyLatest?.isEfcRequireDmReview != true && selectedTMCSEmergencyLatest.zone.fanDirection.toLowerCase() == 'left/right'">
                         <div class="d-grid">
                             <button class="btn btn-primary" (click)="reviewEfcFromDm()">Review from DM</button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <hr />
                 <div class="col-md-10 mx-auto text-center">

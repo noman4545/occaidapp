@@ -15,7 +15,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-md-3 text-center">
+        <!-- <div class="col-md-3 text-center">
             <div class="d-grid">
                 <select class="form-select" [(ngModel)]="reviewableDropdownValue" #reviewSmsList (change)="getReviewSMSDetails($any($event.target).value)">
                     <option value="">Select SMS To Review</option>
@@ -24,7 +24,7 @@
                     </ng-container>
                 </select>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="row mt-4 mb-4" *ngIf="selectedSMS">
@@ -132,16 +132,21 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="!receivedSMS.isRequiredDmReview">
-                    <div class="col-md-3 text-center" *ngIf="receivedSMS.isDmReviewed">
+                    <!-- <div class="col-md-3 text-center" *ngIf="receivedSMS.isDmReviewed">
                         <div class="d-grid">
                             <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-3 text-center">
+                      <div class="d-grid">
+                          <button class="btn btn-success" (click)="markAsComplete()">Mark as complete</button>
+                      </div>
+                  </div>
+                    <!-- <div class="col-md-3 text-center">
                         <div class="d-grid">
                             <button class="btn btn-primary w-100" (click)="reviewFromDm()">Review from DM</button>
                         </div>
-                    </div>
+                    </div> -->
                 </ng-container>
             </div>
         </div>
